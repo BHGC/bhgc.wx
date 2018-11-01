@@ -80,22 +80,32 @@ read_noaa <- function(url, tz = timezone()) {
 } ## read_noaa()
 
 
-ggplot_datetime_labels <- function(t, tz = timezone()) {
+ggplot_datetime_labels <- function(t, tz = timezone(), flavor = getOption("flavor", "wide")) {
+  flavor <- match.arg(flavor, choices = c("wide", "narrow"))
+  
 ##  message(sprintf("ggplot_datetime_labels(): tz=%s", tz))
-
-  times <- strftime(t, format = "%H:%M", tz = tz)
 
   hours <- strftime(t, format = "%H", tz = tz)
   uhours <- sort(unique(hours))
   near_noon <- uhours[which.min(abs(as.integer(uhours) - 12L))]
 
-  dates <- strftime(t, format = "%a %b %d", tz = tz)
-  dates[hours != near_noon] <- NA_character_
-
-  last <- rev(which(!is.na(dates)))[1]
-  dates[last] <- strftime(t[last], format = "%a %b %d (%Z)", tz = tz)
-
-  labels <- ifelse(is.na(dates), times, paste0(times, "\n", dates))
+  if (flavor == "wide") {
+    times <- strftime(t, format = "%H:%M", tz = tz)
+    dates <- strftime(t, format = "%a %b %d", tz = tz)
+    dates[hours != near_noon] <- NA_character_
+    last <- rev(which(!is.na(dates)))[1]
+    dates[last] <- strftime(t[last], format = "%a %b %d (%Z)", tz = tz)
+    labels <- ifelse(is.na(dates), times, paste0(times, "\n", dates))
+  } else if (flavor == "narrow") {
+    times <- strftime(t, format = "%H", tz = tz)
+    days <- strftime(t, format = "%a", tz = tz)
+    days[hours != near_noon] <- NA_character_
+    dates <- strftime(t, format = "%b %d", tz = tz)
+    dates[hours != near_noon] <- NA_character_
+    last <- rev(which(!is.na(dates)))[1]
+    dates[last] <- strftime(t[last], format = "%a %b %d (%Z)", tz = tz)
+    labels <- ifelse(is.na(dates), times, paste0(times, "\n", days))
+  }
 
   labels
 }
@@ -111,9 +121,11 @@ date_range <- function(values, tz = timezone()) {
   range
 }
 
-ggplot_noaa_wind_direction <- function(values, x_limits = date_range(values), ndays = NULL) {
+ggplot_noaa_wind_direction <- function(values, x_limits = date_range(values), ndays = NULL, windows_size = Inf) {
   library(ggplot2)
 
+  if (is.null(windows_size)) windows_size <- 1024
+  
   ## https://clrs.cc/
   color_map <- c(black = "#111111", gray = "#AAAAAA", green = "#2ECC40", yellow = "#FFDC00", red = "#FF4136")
   bins <- cut(values$wind_direction, breaks = c(-Inf, 135, 180, 270, 300, Inf))
@@ -122,11 +134,15 @@ ggplot_noaa_wind_direction <- function(values, x_limits = date_range(values), nd
   if (!is.null(ndays)) x_limits[2] <- x_limits[1] + ndays * 24 * 3600
   x_breaks <- seq(from = x_limits[1], to = x_limits[2], by = "12 hours")
 
+  ndays2 <- length(x_breaks) / 2
+  flavor <- if (8/ndays * windows_size[1] < 1000) "narrow" else "wide"
+  options(flavor = flavor)
+
   gg <- ggplot(values, aes(start, wind_direction)) + geom_point(color = cols)
   
   wind_dirs <- c(N = 0, E = 90, S = 180, W = 270, N = 360)
   
-  gg <- gg + scale_y_continuous(limits = c(0, 360), breaks = wind_dirs, labels = names(wind_dirs), minor_breaks = seq(0, 360, by = 30), sec.axis = sec_axis(~., breaks = as.integer(wind_dirs), name = "Wind direction (degrees)"))
+  gg <- gg + scale_y_continuous(limits = c(0, 360), breaks = wind_dirs, labels = names(wind_dirs), minor_breaks = seq(0, 360, by = 30), sec.axis = sec_axis(~., breaks = as.integer(wind_dirs)))
 
   gg <- gg + labs(y = "Wind direction")
   
@@ -139,17 +155,23 @@ ggplot_noaa_wind_direction <- function(values, x_limits = date_range(values), nd
   gg
 }
 
-ggplot_noaa_surface_wind <- function(values, x_limits = date_range(values), ndays = NULL) {
+ggplot_noaa_surface_wind <- function(values, x_limits = date_range(values), ndays = NULL, windows_size = Inf) {
   library(ggplot2)
+
+  if (is.null(windows_size)) windows_size <- 1024
 
   if (!is.null(ndays)) x_limits[2] <- x_limits[1] + ndays * 24 * 3600
   x_breaks <- seq(from = x_limits[1], to = x_limits[2], by = "12 hours")
 
+  ndays2 <- length(x_breaks) / 2
+  flavor <- if (8/ndays * windows_size[1] < 1000) "narrow" else "wide"
+  options(flavor = flavor)
+
   gg <- ggplot(values, aes(start, surface_wind)) + geom_point()
 
-  gg <- gg + scale_y_continuous(limits = c(0, 20), minor_breaks = seq(0, 20, by = 1), sec.axis = sec_axis(~ 0.44704 * ., name = "Wind speed (m/s)"))
+  gg <- gg + scale_y_continuous(limits = c(0, 20), minor_breaks = seq(0, 20, by = 1), sec.axis = sec_axis(~ 0.44704 * .))
   
-  gg <- gg + labs(y = "Wind speed (mph)")
+  gg <- gg + labs(y = "Wind speed (mph <-> m/s)")
 
   gg <- gg + scale_x_datetime(limits = x_limits, breaks = x_breaks, labels = ggplot_datetime_labels)  ## , date_minor_breaks = "6 hours"
   

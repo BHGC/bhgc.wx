@@ -1,4 +1,5 @@
 library(shiny)
+
 source("utils.R")
 
 timezone("America/Los_Angeles")
@@ -16,6 +17,8 @@ url <- noaa_url(lat=location$lat, lon=location$lon)
 if (!exists("db")) db <- list()
 if (is.null(db$values)) db$values <- read_noaa(url)
 
+options(flavor = "narrow")
+
 # Define UI for app that draws a histogram ----
 ui <- fluidPage(
 
@@ -27,6 +30,22 @@ ui <- fluidPage(
 
     # Sidebar panel for inputs ----
     sidebarPanel(
+      ## Get windows width and height
+      ## Source: https://stackoverflow.com/a/37060206/1072091
+      tags$head(tags$script('
+                                var dimension = [0, 0];
+                                $(document).on("shiny:connected", function(e) {
+                                    dimension[0] = window.innerWidth;
+                                    dimension[1] = window.innerHeight;
+                                    Shiny.onInputChange("dimension", dimension);
+                                });
+                                $(window).resize(function(e) {
+                                    dimension[0] = window.innerWidth;
+                                    dimension[1] = window.innerHeight;
+                                    Shiny.onInputChange("dimension", dimension);
+                                });
+                            ')),
+    
       strong(sprintf("Site: %s", location$name)), br(),
       "Data: ", a("NOAA Forecast", href = noaa_url(lat=location$lat, lon=location$lon, format = "html")), br(),
       "Last updated: ", as.character(attr(db$values, "last_updated"), usetz = TRUE), br(),
@@ -45,21 +64,12 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram ----
 server <- function(input, output) {
-
-  # Histogram of the Old Faithful Geyser Data ----
-  # with requested number of bins
-  # This expression that generates a histogram is wrapped in a call
-  # to renderPlot to indicate that:
-  #
-  # 1. It is "reactive" and therefore should be automatically
-  #    re-executed when inputs (input$bins) change
-  # 2. Its output type is a plot
   output$wind_direction <- renderPlot({
-    ggplot_noaa_wind_direction(db$values, ndays = input$ndays)
+    ggplot_noaa_wind_direction(db$values, ndays = input$ndays, windows_size = input$dimension)
   })
 
   output$surface_wind <- renderPlot({
-    ggplot_noaa_surface_wind(db$values, ndays = input$ndays)
+    ggplot_noaa_surface_wind(db$values, ndays = input$ndays, windows_size = input$dimension)
   })
 }
 
