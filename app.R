@@ -49,9 +49,12 @@ ui <- fluidPage(
       strong(sprintf("Site: %s", location$name)), br(),
       "Data: ", a("NOAA Forecast", href = noaa_url(lat=location$lat, lon=location$lon, format = "html")), br(),
       "Last updated: ", as.character(attr(db$values, "last_updated"), usetz = TRUE), br(),
-      sliderInput("ndays", "Days ahead: ",
-                     min = 1L, max = 8L, value = 3L,
-		     step = 1L, round = TRUE)
+      sliderInput("period", "Days: ",
+                     min = Sys.Date(), max = Sys.Date() + 7L,
+		     value = Sys.Date() + 3L,
+		     step = 1L,
+		     timeFormat = "%a %b %e",
+		     round = TRUE)
     ),
 
     # Main panel for displaying outputs ----
@@ -65,11 +68,13 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram ----
 server <- function(input, output) {
   output$wind_direction <- renderPlot({
-    ggplot_noaa_wind_direction(db$values, ndays = input$ndays, windows_size = input$dimension)
+    ndays <- as.integer(input$period - Sys.Date() + 1L)
+    ggplot_noaa_wind_direction(db$values, ndays = ndays, windows_size = input$dimension)
   })
 
   output$surface_wind <- renderPlot({
-    ggplot_noaa_surface_wind(db$values, ndays = input$ndays, windows_size = input$dimension)
+    ndays <- as.integer(input$period - Sys.Date() + 1L)
+    ggplot_noaa_surface_wind(db$values, ndays = ndays, windows_size = input$dimension)
   })
 }
 
