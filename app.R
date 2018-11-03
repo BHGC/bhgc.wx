@@ -49,12 +49,13 @@ ui <- fluidPage(
       strong(sprintf("Site: %s", location$name)), br(),
       "Data: ", a("NOAA Forecast", href = noaa_url(lat=location$lat, lon=location$lon, format = "html")), br(),
       "Last updated: ", as.character(attr(db$values, "last_updated"), usetz = TRUE), br(),
-      sliderInput("days", "Days: ",
+      sliderInput("days", "Forecast: ",
                      min = Sys.Date(), max = Sys.Date() + 7L,
 		     value = Sys.Date() + c(0L, 3L),
 		     step = 1L,
 		     timeFormat = "%a %b %e",
-		     round = TRUE)
+		     round = TRUE,
+		     ticks = FALSE)
     ),
 
     # Main panel for displaying outputs ----
