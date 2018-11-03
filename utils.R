@@ -29,6 +29,7 @@ read_noaa <- function(url, tz = timezone()) {
   library(tibble)
   library(lubridate)
   library(dplyr)
+  
 ##  message(sprintf("read_noaa(): tz=%s", tz))
   
   doc <- read_xml(url)
@@ -112,6 +113,8 @@ ggplot_datetime_labels <- function(t, tz = timezone(), flavor = getOption("flavo
 
 #' @importFrom lubridate floor_date ceiling_date
 date_range <- function(values, tz = timezone()) {
+  library(lubridate)
+  
   first <- min(values$start, na.rm = TRUE)
   last <- max(values$end, na.rm = TRUE)
   start <- floor_date(first, unit = "12 hours")
@@ -121,9 +124,10 @@ date_range <- function(values, tz = timezone()) {
   range
 }
 
-ggplot_noaa_wind_direction <- function(values, x_limits = date_range(values), ndays = NULL, windows_size = Inf) {
+ggplot_noaa_wind_direction <- function(values, x_limits = date_range(values), days = NULL, windows_size = Inf) {
   library(ggplot2)
-
+  library(lubridate)
+  
   if (is.null(windows_size)) windows_size <- 1024
   
   ## https://clrs.cc/
@@ -131,10 +135,15 @@ ggplot_noaa_wind_direction <- function(values, x_limits = date_range(values), nd
   bins <- cut(values$wind_direction, breaks = c(-Inf, 135, 180, 270, 300, Inf))
   cols <- color_map[c("red", "yellow", "green", "yellow", "red")[bins]]
 
-  if (!is.null(ndays)) x_limits[2] <- x_limits[1] + ndays * 24 * 3600
+  if (!is.null(days)) {
+    tz <- timezone()
+    x_limits[1] <- floor_date(as_datetime(days[1] + 1L, tz = tz), unit = "days")
+    x_limits[2] <- ceiling_date(as_datetime(days[2] + 1L, tz = tz), unit = "days")
+  }
+  
   x_breaks <- seq(from = x_limits[1], to = x_limits[2], by = "12 hours")
 
-  ndays2 <- length(x_breaks) / 2
+  ndays <- length(x_breaks) / 2
   flavor <- if (8/ndays * windows_size[1] < 1000) "narrow" else "wide"
   options(flavor = flavor)
 
@@ -155,15 +164,21 @@ ggplot_noaa_wind_direction <- function(values, x_limits = date_range(values), nd
   gg
 }
 
-ggplot_noaa_surface_wind <- function(values, x_limits = date_range(values), ndays = NULL, windows_size = Inf) {
+ggplot_noaa_surface_wind <- function(values, x_limits = date_range(values), days = NULL, windows_size = Inf) {
   library(ggplot2)
+  library(lubridate)
 
   if (is.null(windows_size)) windows_size <- 1024
 
-  if (!is.null(ndays)) x_limits[2] <- x_limits[1] + ndays * 24 * 3600
+  if (!is.null(days)) {
+    tz <- timezone()
+    x_limits[1] <- floor_date(as_datetime(days[1] + 1L, tz = tz), unit = "days")
+    x_limits[2] <- ceiling_date(as_datetime(days[2] + 1L, tz = tz), unit = "days")
+  }
+
   x_breaks <- seq(from = x_limits[1], to = x_limits[2], by = "12 hours")
 
-  ndays2 <- length(x_breaks) / 2
+  ndays <- length(x_breaks) / 2
   flavor <- if (8/ndays * windows_size[1] < 1000) "narrow" else "wide"
   options(flavor = flavor)
 
