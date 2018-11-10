@@ -8,6 +8,10 @@ stopifnot(timezone() == "America/Los_Angeles")
 ## "https://forecast.weather.gov/MapClick.php?lat=37.461100&lon=-121.864600&FcstType=digitalDWML"
 location <- list(
   name = "Ed Levin, CA",
+  seealso = c(
+    BHGC = "http://bhgc.org/sites/",
+    WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
+  ),
   lat=37.4611,
   lon=-121.8646
 )
@@ -47,8 +51,8 @@ ui <- fluidPage(
                             ')),
     
       strong(sprintf("Site: %s", location$name)), br(),
-      "Data: ", a("NOAA Forecast", href = noaa_url(lat=location$lat, lon=location$lon, format = "html")), br(),
-      "Last updated: ", as.character(attr(db$values, "last_updated"), usetz = TRUE), br(),
+      "Source: ", a("NOAA", href = noaa_url(lat=location$lat, lon=location$lon, format = "html")), sprintf("(%s)", as.character(attr(db$values, "last_updated"), usetz = TRUE)), br(),
+      "See also: ", lapply(names(location$seealso), function(name) a(name, href = location$seealso[name])), br(),
       sliderInput("days", "Forecast: ",
                      min = Sys.Date(), max = Sys.Date() + 7L,
 		     value = Sys.Date() + c(0L, 3L),
