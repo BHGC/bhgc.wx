@@ -132,7 +132,7 @@ ggplot_noaa_wind_direction <- function(values, x_limits = date_range(values), da
   
   ## https://clrs.cc/
   color_map <- c(black = "#111111", gray = "#AAAAAA", green = "#2ECC40", yellow = "#FFDC00", red = "#FF4136")
-  bins <- cut(values$wind_direction, breaks = c(-Inf, 135, 180, 270, 300, Inf))
+  bins <- cut(values$wind_direction, breaks = c(-Inf, 135, 180-1, 270, 300, Inf))
   cols <- color_map[c("red", "yellow", "green", "yellow", "red")[bins]]
 
   if (!is.null(days)) {
@@ -147,7 +147,7 @@ ggplot_noaa_wind_direction <- function(values, x_limits = date_range(values), da
   flavor <- if (8/ndays * windows_size[1] < 1000) "narrow" else "wide"
   options(flavor = flavor)
 
-  gg <- ggplot(values, aes(start, wind_direction)) + geom_point(color = cols)
+  gg <- ggplot(values, aes(start, wind_direction)) + geom_point(color = cols, size = 2.0)
   
   wind_dirs <- c(N = 0, E = 90, S = 180, W = 270, N = 360)
   
@@ -182,7 +182,7 @@ ggplot_noaa_surface_wind <- function(values, x_limits = date_range(values), days
   flavor <- if (8/ndays * windows_size[1] < 1000) "narrow" else "wide"
   options(flavor = flavor)
 
-  gg <- ggplot(values, aes(start, surface_wind)) + geom_point()
+  gg <- ggplot(values, aes(start, surface_wind)) + geom_point(size = 2.0)
 
   gg <- gg + scale_y_continuous(limits = c(0, 20), minor_breaks = seq(0, 20, by = 1), sec.axis = sec_axis(~ 0.44704 * .))
   
