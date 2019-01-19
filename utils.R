@@ -177,19 +177,28 @@ ggplot_noaa_surface_wind <- function(values, x_limits = date_range(values), days
   }
 
   x_breaks <- seq(from = x_limits[1], to = x_limits[2], by = "12 hours")
+  y_limits <- c(0, 20)
 
   ndays <- length(x_breaks) / 2
   flavor <- if (8/ndays * windows_size[1] < 1000) "narrow" else "wide"
   options(flavor = flavor)
 
-  gg <- ggplot(values, aes(start, surface_wind)) + geom_point(size = 2.0)
+  gg <- ggplot(values)
 
-  gg <- gg + scale_y_continuous(limits = c(0, 20), minor_breaks = seq(0, 20, by = 1), sec.axis = sec_axis(~ 0.44704 * .))
+  gg <- gg + scale_y_continuous(limits = y_limits, minor_breaks = seq(0, 20, by = 1), sec.axis = sec_axis(~ 0.44704 * .))
   
   gg <- gg + labs(y = "Wind speed (mph <-> m/s)")
 
   gg <- gg + scale_x_datetime(limits = x_limits, breaks = x_breaks, labels = ggplot_datetime_labels)  ## , date_minor_breaks = "6 hours"
+
+  rain <- values$precipitation_potential/100
+  rain[rain == 0] <- NA_real_
   
+##  gg <- gg + geom_point(aes(start, diff(y_limits)*rain, color = rain), size = 2.0) + scale_colour_gradient(low = "white", high = "blue")
+  gg <- gg + geom_bar(stat = "identity", aes(start, diff(y_limits)*rain), fill = "blue", alpha = 0.25, size = 2.0)
+
+  gg <- gg + geom_point(aes(start, surface_wind), size = 2.0)
+
   gg <- gg + theme(axis.title.x = element_blank())
 
   gg
