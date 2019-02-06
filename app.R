@@ -5,21 +5,38 @@ source("utils.R")
 timezone("America/Los_Angeles")
 stopifnot(timezone() == "America/Los_Angeles")
 
-## "https://forecast.weather.gov/MapClick.php?lat=37.461100&lon=-121.864600&FcstType=digitalDWML"
-location <- list(
-  name = "Ed Levin, CA (600 ft)",
-  seealso = c(
-    BHGC = "http://bhgc.org/sites/",
-    WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
+locations <- list(
+  ## "https://forecast.weather.gov/MapClick.php?lat=37.461100&lon=-121.864600&FcstType=digitalDWML"
+  "Ed Levin, CA (600 ft)" = list(
+    name = "Ed Levin, CA (600 ft)",
+    seealso = c(
+      BHGC = "http://bhgc.org/sites/",
+      WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
+    ),
+    lat=  37.4611,
+    lon=-121.8646
   ),
-  lat=  37.4611,
-  lon=-121.8646
+
+  ## "https://forecast.weather.gov/MapClick.php?lat=37.475389&lon=-121.861305&FcstType=digitalDWML"
+  "Ed Levin, CA (1750 ft)" = list(
+    name = "Ed Levin, CA (1750 ft)",
+    seealso = c(
+      BHGC = "http://bhgc.org/sites/",
+      WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
+    ),
+    lat=  37.4611,
+    lon=-121.8646
+  )
 )
 
-url <- noaa_url(lat=location$lat, lon=location$lon)
+location <- locations[["Ed Levin, CA (600 ft)"]]
+location <- locations[["Ed Levin, CA (1750 ft)"]]
 
 if (!exists("db")) db <- list()
-if (is.null(db$values)) db$values <- read_noaa(url)
+if (is.null(db$values)) {
+  url <- noaa_url(lat=location$lat, lon=location$lon)
+  db$values <- read_noaa(url)
+}
 
 options(flavor = "narrow")
 
