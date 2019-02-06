@@ -7,12 +7,12 @@ stopifnot(timezone() == "America/Los_Angeles")
 
 ## "https://forecast.weather.gov/MapClick.php?lat=37.461100&lon=-121.864600&FcstType=digitalDWML"
 location <- list(
-  name = "Ed Levin, CA",
+  name = "Ed Levin, CA (600 ft)",
   seealso = c(
     BHGC = "http://bhgc.org/sites/",
     WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
   ),
-  lat=37.4611,
+  lat=  37.4611,
   lon=-121.8646
 )
 
