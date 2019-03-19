@@ -7,14 +7,25 @@ stopifnot(timezone() == "America/Los_Angeles")
 
 locations <- list(
   ## "https://forecast.weather.gov/MapClick.php?lat=37.461100&lon=-121.864600&FcstType=digitalDWML"
-  "Ed Levin, CA (600 ft)" = list(
-    name = "Ed Levin, CA (600 ft)",
+  "Ed Levin, CA (300 ft)" = list(
+    name = "Ed Levin, CA (300 ft)",
     seealso = c(
       BHGC = "http://bhgc.org/sites/",
       WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
     ),
     lat=  37.4611,
     lon=-121.8646
+  ),
+
+  ## "https://forecast.weather.gov/MapClick.php?lat=37.461324&lon=-121.859979&FcstType=digitalDWML"
+  "Ed Levin, CA (600 ft)" = list(
+    name = "Ed Levin, CA (600 ft)",
+    seealso = c(
+      BHGC = "http://bhgc.org/sites/",
+      WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
+    ),
+    lat=  37.4613,
+    lon=-121.8600
   ),
 
   ## "https://forecast.weather.gov/MapClick.php?lat=37.475389&lon=-121.861305&FcstType=digitalDWML"
@@ -24,8 +35,8 @@ locations <- list(
       BHGC = "http://bhgc.org/sites/",
       WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
     ),
-    lat=  37.4611,
-    lon=-121.8646
+    lat=  37.4754,
+    lon=-121.8613
   )
 )
 
