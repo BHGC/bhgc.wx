@@ -22,7 +22,7 @@ locations <- list(
     lat=  37.4754, lon=-121.8613
   ),
 
-  "Mussle Rock/The Dump, CA (100 ft)" = list(
+  "Mussle Rock/The Dumps, CA (100 ft)" = list(
     seealso = c(
       BHGC = "http://bhgc.org/sites/",
       WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
