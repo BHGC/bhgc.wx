@@ -6,26 +6,28 @@ timezone("America/Los_Angeles")
 stopifnot(timezone() == "America/Los_Angeles")
 
 locations <- list(
-  ## "https://forecast.weather.gov/MapClick.php?lat=37.461100&lon=-121.864600&FcstType=digitalDWML"
-  "Ed Levin, CA (300 ft)" = list(
-    name = "Ed Levin, CA (300 ft & 600 ft)",
+  "Ed Levin, CA (300 ft & 600 ft)" = list(
     seealso = c(
       BHGC = "http://bhgc.org/sites/",
       WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
     ),
-    lat=  37.4611,
-    lon=-121.8646
+    lat=  37.4611, lon=-121.8646
   ),
 
-  ## "https://forecast.weather.gov/MapClick.php?lat=37.475389&lon=-121.861305&FcstType=digitalDWML"
   "Ed Levin, CA (1750 ft)" = list(
-    name = "Ed Levin, CA (1750 ft)",
     seealso = c(
       BHGC = "http://bhgc.org/sites/",
       WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
     ),
-    lat=  37.4754,
-    lon=-121.8613
+    lat=  37.4754, lon=-121.8613
+  ),
+
+  "Marshall Peak (4200 ft)" = list(
+    seealso = c(
+      BHGC = "http://bhgc.org/sites/",
+      WindSlammer = NA
+    ),
+    lat = 34.210000, lon =-117.302900
   )
 )
 
@@ -68,9 +70,9 @@ ui <- fluidPage(
                             ')),
     
       selectInput("site", "Choose a flying site:", names(locations), selected = selected_location),
-      strong(sprintf("Site: %s", location$name)), br(),
-      "Source: ", a("NOAA", href = noaa_url(lat=location$lat, lon=location$lon, format = "html")), sprintf("(%s)", as.character(attr(db[[selected_location]], "last_updated"), usetz = TRUE)), br(),
-      "See also: ", lapply(names(location$seealso), function(name) a(name, href = location$seealso[name])), br(),
+#      strong(sprintf("Site: %s", location$name)), br(),
+#      "Source: ", a("NOAA", href = noaa_url(lat=location$lat, lon=location$lon, format = "html")), sprintf("(%s)", as.character(attr(db[[selected_location]], "last_updated"), usetz = TRUE)), br(),
+#      "See also: ", lapply(names(location$seealso), function(name) a(name, href = location$seealso[name])), br(),
       sliderInput("days", "Forecast: ",
                      min = Sys.Date(), max = Sys.Date() + 7L,
 		     value = Sys.Date() + c(0L, 3L),

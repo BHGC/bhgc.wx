@@ -148,7 +148,7 @@ ggplot_noaa_wind_direction <- function(values, x_limits = date_range(values), da
   options(flavor = flavor)
 
   gg <- ggplot(values, aes(start, wind_direction)) + geom_point(color = cols, size = 2.0)
-  
+
   wind_dirs <- c(N = 0, E = 90, S = 180, W = 270, N = 360)
   
   gg <- gg + scale_y_continuous(limits = c(0, 360), breaks = wind_dirs, labels = names(wind_dirs), minor_breaks = seq(0, 360, by = 30), sec.axis = sec_axis(~., breaks = as.integer(wind_dirs)))
@@ -173,11 +173,11 @@ ggplot_noaa_surface_wind <- function(values, x_limits = date_range(values), days
   if (!is.null(days)) {
     tz <- timezone()
     x_limits[1] <- floor_date(as_datetime(days[1] + 1L, tz = tz), unit = "days")
-    x_limits[2] <- ceiling_date(as_datetime(days[2] + 1L, tz = tz), unit = "days")
+    x_limits[2] <- ceiling_date(as_datetime(days[2] + 1L, tz = tz), unit = "days	")
   }
 
   x_breaks <- seq(from = x_limits[1], to = x_limits[2], by = "12 hours")
-  y_limits <- c(0, 20)
+  y_limits <- c(0, 25)
 
   ndays <- length(x_breaks) / 2
   flavor <- if (8/ndays * windows_size[1] < 1000) "narrow" else "wide"
@@ -198,6 +198,8 @@ ggplot_noaa_surface_wind <- function(values, x_limits = date_range(values), days
   gg <- gg + geom_bar(stat = "identity", aes(start, diff(y_limits)*rain), fill = "blue", alpha = 0.25, size = 2.0)
 
   gg <- gg + geom_point(aes(start, surface_wind), size = 2.0)
+
+  gg <- gg + geom_point(aes(start, gust), size = 2.0, shape = 4L, color = "red")
 
   gg <- gg + theme(axis.title.x = element_blank())
 
