@@ -22,12 +22,20 @@ locations <- list(
     lat=  37.4754, lon=-121.8613
   ),
 
-  "Mussle Rock/The Dumps, CA (100 ft)" = list(
+  "Mussel Rock/The Dumps, CA (100 ft)" = list(
     seealso = c(
       BHGC = "http://bhgc.org/sites/",
       WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
     ),
     lat=37.6721641, lon=-122.4939425
+  ),
+
+  "Dunlap, CA (4600 ft)" = list(
+    seealso = c(
+      BHGC = "http://bhgc.org/sites/",
+      WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
+    ),
+    lat=36.7641, lon=-119.0976
   ),
 
   "Marshall Peak (4200 ft)" = list(
