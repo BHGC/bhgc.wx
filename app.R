@@ -44,8 +44,8 @@ ui <- fluidPage(
                             ')),
     
       selectInput("site", "Choose a flying site:", names(locations), selected = selected_location),
-#      strong(sprintf("Site: %s", location$name)), br(),
-#      "Source: ", a("NOAA", href = noaa_url(lat=location$lat, lon=location$lon, format = "html")), sprintf("(%s)", as.character(attr(db[[selected_location]], "last_updated"), usetz = TRUE)), br(),
+##      htmlOutput("site_description", inline = TRUE), br(),
+      htmlOutput("data_source", inline = TRUE), br(),
 #      "See also: ", lapply(names(location$seealso), function(name) a(name, href = location$seealso[name])), br(),
       sliderInput("days", "Forecast: ",
                      min = Sys.Date(), max = Sys.Date() + 7L,
@@ -66,6 +66,10 @@ ui <- fluidPage(
 
 # Define server logic required to draw a histogram ----
 server <- function(input, output) {
+  output$data_source <- renderUI({
+    location <- locations[[input$site]]
+    list("Source: ", a("NOAA", href = noaa_url(lat=location$lat, lon=location$lon, format = "html")), sprintf(" (%s)", as.character(attr(db[[input$site]], "last_updated"), usetz = TRUE)))
+  })
 
   output$wind_direction <- renderPlot({
     if (is.null(db[[input$site]])) {
