@@ -10,7 +10,7 @@ if (!exists("db")) db <- list()
 
 if (is.null(db[[selected_location]])) {
   location <- locations[[selected_location]]
-  url <- noaa_url(lat=location$lat, lon=location$lon)
+  url <- noaa_url(lat=location$launch_gps[1], lon=location$launch_gps[2])
   db[[selected_location]] <- read_noaa(url)
 }
 
@@ -68,13 +68,13 @@ ui <- fluidPage(
 server <- function(input, output) {
   output$data_source <- renderUI({
     location <- locations[[input$site]]
-    list("Source: ", a("NOAA", href = noaa_url(lat=location$lat, lon=location$lon, format = "html")), sprintf(" (%s)", as.character(attr(db[[input$site]], "last_updated"), usetz = TRUE)))
+    list("Source: ", a("NOAA", href = noaa_url(lat=location$launch_gps[1], lon=location$launch_gps[2], format = "html")), sprintf(" (%s)", as.character(attr(db[[input$site]], "last_updated"), usetz = TRUE)))
   })
 
   output$wind_direction <- renderPlot({
     if (is.null(db[[input$site]])) {
       location <- locations[[input$site]]
-      url <- noaa_url(lat=location$lat, lon=location$lon)
+      url <- noaa_url(lat=location$launch_gps[1], lon=location$launch_gps[2])
       db[[input$site]] <<- read_noaa(url)
     }
     ggplot_noaa_wind_direction(db[[input$site]], days = input$days, windows_size = input$dimension)
@@ -83,7 +83,7 @@ server <- function(input, output) {
   output$surface_wind <- renderPlot({
     if (is.null(db[[input$site]])) {
       location <- locations[[input$site]]
-      url <- noaa_url(lat=location$lat, lon=location$lon)
+      url <- noaa_url(lat=location$launch_gps[1], lon=location$launch_gps[2])
       db[[input$site]] <<- read_noaa(url)
     }
     ggplot_noaa_surface_wind(db[[input$site]], days = input$days, windows_size = input$dimension)
