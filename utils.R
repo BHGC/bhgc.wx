@@ -8,6 +8,11 @@ timezone <- local({
 
 
 noaa_url <- function(lat, lon, format = c("xml", "html")) {
+  gps <- lat
+  if (length(gps) == 2) {
+    lat <- gps[1]
+    lon <- gps[2]
+  }
   lat <- as.numeric(lat)
   lon <- as.numeric(lon)
   format <- match.arg(format)

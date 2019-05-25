@@ -10,7 +10,7 @@ if (!exists("db")) db <- list()
 
 if (is.null(db[[selected_location]])) {
   location <- locations[[selected_location]]
-  url <- noaa_url(lat=location$launch_gps[1], lon=location$launch_gps[2])
+  url <- noaa_url(location$launch_gps)
   db[[selected_location]] <- read_noaa(url)
 }
 
@@ -65,16 +65,26 @@ ui <- fluidPage(
 )
 
 # Define server logic required to draw a histogram ----
-server <- function(input, output) {
+server <- function(input, output, session) {
+  observe({
+    query <- parseQueryString(session$clientData$url_search)
+    site_idx <- query[['site_idx']]
+    site_idx <- as.integer(site_idx)
+    if (length(site_idx) > 0 && !is.na(site_idx)) {
+      value <- names(locations)[site_idx]
+      updateTextInput(session, "site", value = value)
+    }
+  })
+
   output$data_source <- renderUI({
     location <- locations[[input$site]]
-    list("Source: ", a("NOAA", href = noaa_url(lat=location$launch_gps[1], lon=location$launch_gps[2], format = "html")), sprintf(" (%s)", as.character(attr(db[[input$site]], "last_updated"), usetz = TRUE)))
+    list("Source: ", a("NOAA", href = noaa_url(location$launch_gps, format = "html")), sprintf(" (%s)", as.character(attr(db[[input$site]], "last_updated"), usetz = TRUE)))
   })
 
   output$wind_direction <- renderPlot({
     if (is.null(db[[input$site]])) {
       location <- locations[[input$site]]
-      url <- noaa_url(lat=location$launch_gps[1], lon=location$launch_gps[2])
+      url <- noaa_url(location$launch_gps)
       db[[input$site]] <<- read_noaa(url)
     }
     ggplot_noaa_wind_direction(db[[input$site]], days = input$days, windows_size = input$dimension)
@@ -83,7 +93,7 @@ server <- function(input, output) {
   output$surface_wind <- renderPlot({
     if (is.null(db[[input$site]])) {
       location <- locations[[input$site]]
-      url <- noaa_url(lat=location$launch_gps[1], lon=location$launch_gps[2])
+      url <- noaa_url(location$launch_gps)
       db[[input$site]] <<- read_noaa(url)
     }
     ggplot_noaa_surface_wind(db[[input$site]], days = input$days, windows_size = input$dimension)
