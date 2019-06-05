@@ -58,8 +58,7 @@ ui <- fluidPage(
 
     # Main panel for displaying outputs ----
     mainPanel(    
-      plotOutput(outputId = "wind_direction", height = "300px"),
-      plotOutput(outputId = "surface_wind", height = "300px")
+      plotOutput(outputId = "wind", height = "500px")
     )
   )
 )
@@ -81,22 +80,27 @@ server <- function(input, output, session) {
     list("Source: ", a("NOAA", href = noaa_url(location$launch_gps, format = "html")), sprintf(" (%s)", as.character(attr(db[[input$site]], "last_updated"), usetz = TRUE)))
   })
 
-  output$wind_direction <- renderPlot({
+  output$wind <- renderPlot({
     if (is.null(db[[input$site]])) {
       location <- locations[[input$site]]
       url <- noaa_url(location$launch_gps)
       db[[input$site]] <<- read_noaa(url)
     }
-    ggplot_noaa_wind_direction(db[[input$site]], days = input$days, windows_size = input$dimension)
-  })
 
-  output$surface_wind <- renderPlot({
-    if (is.null(db[[input$site]])) {
-      location <- locations[[input$site]]
-      url <- noaa_url(location$launch_gps)
-      db[[input$site]] <<- read_noaa(url)
-    }
-    ggplot_noaa_surface_wind(db[[input$site]], days = input$days, windows_size = input$dimension)
+    gg <- ggplot_noaa_wind_direction(db[[input$site]], days = input$days, windows_size = input$dimension)
+#    gg <- gg + xlab("")
+#    gg <- gg + theme(axis.text.x=element_blank(), axis.ticks.x=element_blank())
+#    gg <- gg + scale_x_datetime(position = "top")
+    gg1 <- gg
+  
+    gg2 <- ggplot_noaa_surface_wind(db[[input$site]], days = input$days, windows_size = input$dimension)
+
+    library(cowplot)
+    theme_set(theme_gray())
+
+    res <- plot_grid(gg1, gg2, ncol = 1L, rel_heights = c(1,2), align = "v")
+    
+    res
   })
 }
 

@@ -160,7 +160,7 @@ ggplot_noaa_wind_direction <- function(values, x_limits = date_range(values), da
 
   gg <- gg + labs(y = "Wind direction")
   
-  gg <- gg + scale_x_datetime(limits = x_limits, breaks = x_breaks, labels = ggplot_datetime_labels)
+  gg <- gg + scale_x_datetime(limits = x_limits, breaks = x_breaks, labels = ggplot_datetime_labels, position = "top")
   
   gg <- gg + theme(axis.title.x = element_blank())
 
