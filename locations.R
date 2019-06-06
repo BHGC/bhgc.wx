@@ -1,12 +1,12 @@
 locations <- list(
-  "Big Sur, CA (3200 ft)" = list(
+  "Ed Levin, CA (1750 ft)" = list(
     seealso = c(
       BHGC = "http://bhgc.org/sites/",
       WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
     ),
-    launch_gps = c(35.9713, -121.453)
+    launch_gps = c(37.4754, -121.8613)
   ),
-  
+
   "Ed Levin, CA (300 ft & 600 ft)" = list(
     seealso = c(
       BHGC = "http://bhgc.org/sites/",
@@ -15,12 +15,12 @@ locations <- list(
     launch_gps = c(37.4611, -121.8646)
   ),
 
-  "Ed Levin, CA (1750 ft)" = list(
+  "Blue Rock, Vallejo, CA (100 ft)" = list(
     seealso = c(
       BHGC = "http://bhgc.org/sites/",
       WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
     ),
-    launch_gps = c(37.4754, -121.8613)
+    launch_gps = c(38.1379, -122.195)
   ),
 
   "Mussel Rock/The Dumps, CA (100 ft)" = list(
@@ -31,12 +31,19 @@ locations <- list(
     launch_gps = c(37.6721641, -122.4939425)
   ),
 
-  "Blue Rock, Vallejo, CA (100 ft)" = list(
+  "Mt Tam, CA (Launch B, 1950 ft)" = list(
+    seealso = c(
+      BHGC = "http://bhgc.org/sites/"
+    ),
+    launch_gps = c(37.911167, -122.624422)
+  ),
+
+  "Big Sur, CA (3200 ft)" = list(
     seealso = c(
       BHGC = "http://bhgc.org/sites/",
       WindSlammer = "http://router.hang-gliding.com/WindSlammer/"
     ),
-    launch_gps = c(38.1379, -122.195)
+    launch_gps = c(35.9713, -121.453)
   ),
 
   "Dunlap, CA (4600 ft)" = list(
