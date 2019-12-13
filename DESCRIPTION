@@ -13,4 +13,6 @@ Imports:
     ggplot2,
     lubridate,
     shiny
+Remotes:
+    BHGC/bhgc.wx
 RoxygenNote: 7.0.2
