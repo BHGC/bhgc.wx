@@ -1,3 +1,4 @@
+library(bhgc.wx)
 source("utils.R")
 
 timezone("America/Los_Angeles")
