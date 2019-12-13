@@ -2,13 +2,17 @@
 #'
 #' @param selected_location (character) ...
 #'
-#' @return A Shiny App.
+#' @param as (character) Whether to return a list or a Shiny App.
+#'
+#' @return A named list or a Shiny App.
 #'
 #' @import shiny
 #' @importFrom cowplot plot_grid
 #' @importFrom bhgc.wx noaa_url read_noaa
 #' @export
-noaa_app <- function(selected_location = "Ed Levin, CA (1750 ft)") {
+noaa_app <- function(selected_location = "Ed Levin, CA (1750 ft)", as = c("shiny", "list")) {
+  as <- match.arg(as)
+  
   locations <- noaa_locations()
 
   timezone("America/Los_Angeles")
@@ -111,5 +115,11 @@ noaa_app <- function(selected_location = "Ed Levin, CA (1750 ft)") {
     })
   }
 
-  shinyApp(ui = ui, server = server)
-} ## noaa_app()
+  app <- list(ui = ui, server = server)
+  
+  if (as == "shiny") {
+    app <- shinyApp(ui = app$ui, server = app$server)
+  }
+  
+  app
+}

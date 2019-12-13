@@ -4,13 +4,15 @@
 \alias{noaa_app}
 \title{Creates a NOAA Shiny App}
 \usage{
-noaa_app(selected_location = "Ed Levin, CA (1750 ft)")
+noaa_app(selected_location = "Ed Levin, CA (1750 ft)", as = c("shiny", "list"))
 }
 \arguments{
 \item{selected_location}{(character) ...}
+
+\item{as}{(character) Whether to return a list or a Shiny App.}
 }
 \value{
-A Shiny App.
+A named list or a Shiny App.
 }
 \description{
 Creates a NOAA Shiny App
