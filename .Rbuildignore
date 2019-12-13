@@ -56,4 +56,5 @@ Rplots.pdf$
 ^.ghi
 ^.issues
 ^rsconnect
-^locations.R
+^locations.R$
+^raw_data/

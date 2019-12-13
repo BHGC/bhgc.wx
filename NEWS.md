@@ -1,5 +1,10 @@
-Shiny App: noaa
----------------
+bhgc.wx
+=======
+
+Version: 0.1.3-9000 [2019-12-13]
+
+  * Turned into an R package.
+
 
 Version 0.1.3 (2019-05-24)
 

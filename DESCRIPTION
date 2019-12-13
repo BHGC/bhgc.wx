@@ -1,18 +1,18 @@
-Package: bhgc.wx.shiny
-Version: 0.0.0-9000
-Title: The BHGC Weather Shiny App
-Description: A Shiny app for Berkeley Hang Gliding Club (BHGC) weather services.
+Package: bhgc.wx
+Version: 0.1.3-9000
+Title: The BHGC Weather Package
+Description: A set of tools for Berkeley Hang Gliding Club (BHGC) weather services.
 Authors@R: c(
    person("Henrik", "Bengtsson", role=c("aut", "cre", "cph"),
           email = "hb@bhgc.org"))
 License: GPL (>= 3)
-Depends:
-    bhgc.wx
 Imports:
+    dplyr,
+    magrittr,
+    lubridate,
+    tibble,
+    xml2,
     cowplot,
     ggplot2,
-    lubridate,
     shiny
-Remotes:
-    BHGC/bhgc.wx
 RoxygenNote: 7.0.2

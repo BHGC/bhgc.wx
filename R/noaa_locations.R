@@ -2,7 +2,7 @@
 noaa_locations <- local({
   locations <- NULL
   
-  function(paths = c(".", system.file(package = "bhgc.wx.shiny"))) {
+  function(paths = c(".", "inst", system.file(package = "bhgc.wx"))) {
     if (is.null(locations)) {
       stopifnot(length(paths) > 0L)
       paths <- paths[file_test("-d", paths)]

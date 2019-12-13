@@ -8,7 +8,6 @@
 #'
 #' @import shiny
 #' @importFrom cowplot plot_grid
-#' @importFrom bhgc.wx noaa_url read_noaa
 #' @export
 noaa_app <- function(selected_location = "Ed Levin, CA (1750 ft)", as = c("shiny", "list")) {
   as <- match.arg(as)

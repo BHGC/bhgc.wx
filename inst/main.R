@@ -1,5 +1,5 @@
 library(bhgc.wx)
-source("utils.R")
+timezone <- bhgc.wx:::timezone
 
 timezone("America/Los_Angeles")
 stopifnot(timezone() == "America/Los_Angeles")
