@@ -1,7 +1,7 @@
 SHELL:=/bin/bash
 
-start: app.R main.R utils.R
-	Rscript -e "shiny::runApp()"
+start:
+	Rscript -e "shiny::runApp(bhgc.wx.shiny::noaa_app())"
 
 deploy:
 	Rscript -e "rsconnect::deployApp()"
