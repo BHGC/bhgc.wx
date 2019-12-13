@@ -1,3 +1,10 @@
+#' Get or Set Time Zone used by this Package 
+#'
+#' @param new (character) If non-NULL, new timezone to be set.
+#'
+#' @return (character) The current timezone set.
+#'
+#' @export
 timezone <- local({
   tz <- Sys.timezone()
   function(new = NULL) {
