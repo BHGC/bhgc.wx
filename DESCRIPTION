@@ -10,6 +10,7 @@ Imports:
     dplyr,
     magrittr,
     lubridate,
+    R.cache,
     tibble,
     xml2,
     cowplot,
