@@ -40,7 +40,7 @@ noaa_url <- function(lat, lon, format = c("xml", "html")) {
 #' @importFrom magrittr %>%
 #' @importFrom lubridate as_datetime with_tz
 #' @importFrom tibble as_tibble
-#' @importFrom xml2 read_xml xml_attr xml_children xml_find_all xml_name xml_text
+#' @importFrom xml2 read_xml xml_attr xml_attrs xml_children xml_find_all xml_name xml_text
 #' @export
 read_noaa <- function(url, tz = timezone()) {
 ##  message(sprintf("read_noaa(): tz=%s", tz))
@@ -55,6 +55,20 @@ read_noaa <- function(url, tz = timezone()) {
   last_updated <- xml_text(last_updated)
   last_updated <- with_tz(as_datetime(last_updated), tzone = tz)
 
+  ## Extract (latitute, longitude, altitude)
+  location <- xml_find_all(doc, ".//location")
+  stopifnot(length(location) == 1)
+  data <- xml_children(location[[1]])
+  names <- xml_name(data)
+  point <- data[[which("point" == names)]]
+  point <- xml_attrs(point)
+  stopifnot(all(c("latitude", "longitude") == names(point)))
+  point <- as.numeric(point)
+  height <- data[[which("height" == names)]]
+  units <- xml_attrs(height)[["height-units"]]
+  altitude <- as.numeric(xml_text(height))
+  gps <- c(latitude = point[1], longitude = point[2], altitude = altitude)
+
   start <- unlist(lapply(times, FUN = function(x) xml_find_all(doc, ".//start-valid-time") %>% xml_text))
   end <- unlist(lapply(times, FUN = function(x) xml_find_all(doc, ".//end-valid-time") %>% xml_text))
   
@@ -68,7 +82,6 @@ read_noaa <- function(url, tz = timezone()) {
   stopifnot(length(params) == 1)
   
   data <- xml_children(params[[1]])
-  
   names <- xml_name(data)
   types <- xml_attr(data, "type")
   
@@ -78,12 +91,14 @@ read_noaa <- function(url, tz = timezone()) {
   values <- lapply(data, FUN = function(x) xml_children(x) %>% xml_text %>% as.numeric)
   names(values) <- keys
 
-  values$last_updated <- last_updated
-
   values <- as.data.frame(values, check.names = FALSE, stringsAsFactors = FALSE)
   
   values <- cbind(times, values)
   values <- as_tibble(values)
+
+  values$last_updated <- rep(last_updated, times = nrow(values))
+  values$gps <- rep(list(gps), times = nrow(values))
+
   if (getOption("debug", FALSE)) {
     print(colnames(values))
     print(values)
