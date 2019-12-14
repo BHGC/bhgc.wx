@@ -7,7 +7,7 @@
 \usage{
 noaa_url(lat, lon, format = c("xml", "html"))
 
-read_noaa(url, tz = timezone(), cache = TRUE)
+read_noaa(url, tz = timezone())
 }
 \arguments{
 \item{lat, lon}{(numeric) A lattitude and the longitude.}
@@ -17,9 +17,6 @@ read_noaa(url, tz = timezone(), cache = TRUE)
 \item{url}{(character) A NOAA URL to download and parse.}
 
 \item{tz}{(character) The timezone for all retrieved timestamps.}
-
-\item{cache}{(logical) If TRUE and a cached forecast exists with the same
-timestamp return that instead, otherwise save to cache.}
 }
 \value{
 `noaa_url()` returns a URL (character).

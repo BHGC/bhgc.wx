@@ -20,3 +20,21 @@ has_cache <- function(wx, ext = "rds") {
   pathname <- cache_pathname(wx, ext = ext)
   file_test("-f", pathname)
 }
+
+
+cached <- function(wx) {
+  stopifnot(inherits(wx, "data.frame"))
+
+  cache_name <- cache_pathname(wx)
+  pathname <- paste(cache_name, "tibble.rds", sep = ".")
+  
+  ## Used cached version, if it exists, otherwise cache
+  if (file_test("-f", pathname)) {
+    wx <- readRDS(pathname)
+    attr(wx, "cache_name") <- cache_name
+  } else {
+    saveRDS(wx, file = pathname)
+  }
+  
+  wx  
+}

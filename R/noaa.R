@@ -4,9 +4,6 @@
 #'
 #' @param format (character) Should an XML or an HTML document be retrieved?
 #'
-#' @param cache (logical) If TRUE and a cached forecast exists with the same
-#' timestamp return that instead, otherwise save to cache.
-#'
 #' @return `noaa_url()` returns a URL (character).
 #'
 #' @rdname read_noaa
@@ -46,7 +43,7 @@ noaa_url <- function(lat, lon, format = c("xml", "html")) {
 #' @importFrom tibble as_tibble
 #' @importFrom xml2 read_xml xml_attr xml_attrs xml_children xml_find_all xml_name xml_text
 #' @export
-read_noaa <- function(url, tz = timezone(), cache = TRUE) {
+read_noaa <- function(url, tz = timezone()) {
 ##  message(sprintf("read_noaa(): tz=%s", tz))
   
   doc <- read_xml(url)
@@ -72,16 +69,6 @@ read_noaa <- function(url, tz = timezone(), cache = TRUE) {
   units <- xml_attrs(height)[["height-units"]]
   altitude <- as.numeric(xml_text(height))
   gps <- c(latitude = point[1], longitude = point[2], altitude = altitude)
-
-  ## Already in the cache?
-  if (cache) {
-    dummy <- data.frame(gps = list(gps), last_updated = last_updated)
-    pathname <- cache_pathname(dummy, ext = "tibble.rds")
-    if (file_test("-f", pathname)) {
-      wx <- readRDS(pathname)
-      return(wx)
-    }
-  }
 
   start <- unlist(lapply(times, FUN = function(x) xml_find_all(doc, ".//start-valid-time") %>% xml_text))
   end <- unlist(lapply(times, FUN = function(x) xml_find_all(doc, ".//end-valid-time") %>% xml_text))
@@ -119,11 +106,5 @@ read_noaa <- function(url, tz = timezone(), cache = TRUE) {
     print(wx)
   }
 
-  ## Save to cache?
-  if (cache) {
-    pathname <- cache_pathname(wx, ext = "tibble.rds")
-    saveRDS(wx, file = pathname)
-  }
-  
   wx
 } ## read_noaa()
