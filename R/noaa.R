@@ -4,8 +4,9 @@
 #'
 #' @param format (character) Should an XML or an HTML document be retrieved?
 #'
-#' @return (character) The URL.
+#' @return `noaa_url()` returns a URL (character).
 #'
+#' @rdname read_noaa
 #' @export
 noaa_url <- function(lat, lon, format = c("xml", "html")) {
   gps <- lat
@@ -30,7 +31,10 @@ noaa_url <- function(lat, lon, format = c("xml", "html")) {
 #'
 #' @param tz (character) The timezone for all retrieved timestamps.
 #'
-#' @return (tibble data.frame) The forcasted weather data.
+#' @return `read_noaa()` returns a [tibble::tibble] [base::data.frame] with
+#' forecasted weather data.
+#'
+#' @example incl/read_noaa.R
 #'
 #' @importFrom dplyr rename
 #' @importFrom magrittr %>%
