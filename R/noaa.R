@@ -4,6 +4,9 @@
 #'
 #' @param format (character) Should an XML or an HTML document be retrieved?
 #'
+#' @param cache (logical) If TRUE and a cached forecast exists with the same
+#' timestamp return that instead, otherwise save to cache.
+#'
 #' @return `noaa_url()` returns a URL (character).
 #'
 #' @rdname read_noaa
@@ -39,10 +42,11 @@ noaa_url <- function(lat, lon, format = c("xml", "html")) {
 #' @importFrom dplyr rename
 #' @importFrom magrittr %>%
 #' @importFrom lubridate as_datetime with_tz
+#' @importFrom utils file_test
 #' @importFrom tibble as_tibble
 #' @importFrom xml2 read_xml xml_attr xml_attrs xml_children xml_find_all xml_name xml_text
 #' @export
-read_noaa <- function(url, tz = timezone()) {
+read_noaa <- function(url, tz = timezone(), cache = TRUE) {
 ##  message(sprintf("read_noaa(): tz=%s", tz))
   
   doc <- read_xml(url)
@@ -69,6 +73,16 @@ read_noaa <- function(url, tz = timezone()) {
   altitude <- as.numeric(xml_text(height))
   gps <- c(latitude = point[1], longitude = point[2], altitude = altitude)
 
+  ## Already in the cache?
+  if (cache) {
+    dummy <- data.frame(gps = list(gps), last_updated = last_updated)
+    pathname <- cache_pathname(dummy, ext = "tibble.rds")
+    if (file_test("-f", pathname)) {
+      wx <- readRDS(pathname)
+      return(wx)
+    }
+  }
+
   start <- unlist(lapply(times, FUN = function(x) xml_find_all(doc, ".//start-valid-time") %>% xml_text))
   end <- unlist(lapply(times, FUN = function(x) xml_find_all(doc, ".//end-valid-time") %>% xml_text))
   
@@ -88,22 +102,28 @@ read_noaa <- function(url, tz = timezone()) {
   keys <- sprintf("%s (%s)", names, types)
   keys[is.na(types)] <- names[is.na(types)]
   
-  values <- lapply(data, FUN = function(x) xml_children(x) %>% xml_text %>% as.numeric)
-  names(values) <- keys
+  wx <- lapply(data, FUN = function(x) xml_children(x) %>% xml_text %>% as.numeric)
+  names(wx) <- keys
 
-  values <- as.data.frame(values, check.names = FALSE, stringsAsFactors = FALSE)
-  
-  values <- cbind(times, values)
-  values <- as_tibble(values)
+  wx <- as.data.frame(wx, check.names = FALSE, stringsAsFactors = FALSE)
+  wx <- cbind(times, wx)
+  wx <- as_tibble(wx)
 
-  values$last_updated <- rep(last_updated, times = nrow(values))
-  values$gps <- rep(list(gps), times = nrow(values))
+  wx$last_updated <- rep(last_updated, times = nrow(wx))
+  wx$gps <- rep(list(gps), times = nrow(wx))
+
+  wx <- rename(wx, dewpoint = "temperature (dew point)", heat_index = "temperature (hourly)", surface_wind = "wind-speed (sustained)", cloud_cover = "cloud-amount (total)", precipitation_potential = "probability-of-precipitation (floating)", relative_humidity = "humidity (relative)", wind_direction = "direction (wind)", gust = "wind-speed (gust)", temperature = "temperature (hourly)", forecast = "hourly-qpf (floating)")
 
   if (getOption("debug", FALSE)) {
-    print(colnames(values))
-    print(values)
+    print(colnames(wx))
+    print(wx)
   }
-  values <- rename(values, dewpoint = "temperature (dew point)", heat_index = "temperature (hourly)", surface_wind = "wind-speed (sustained)", cloud_cover = "cloud-amount (total)", precipitation_potential = "probability-of-precipitation (floating)", relative_humidity = "humidity (relative)", wind_direction = "direction (wind)", gust = "wind-speed (gust)", temperature = "temperature (hourly)", forecast = "hourly-qpf (floating)")
 
-  values
+  ## Save to cache?
+  if (cache) {
+    pathname <- cache_pathname(wx, ext = "tibble.rds")
+    saveRDS(wx, file = pathname)
+  }
+  
+  wx
 } ## read_noaa()
