@@ -16,4 +16,6 @@ Imports:
     cowplot,
     ggplot2,
     shiny
+URL: https://github.com/BHGC/bhgc.wx
+BugReports: https://github.com/BHGC/bhgc.wx/issues
 RoxygenNote: 7.0.2
