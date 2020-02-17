@@ -1,9 +1,20 @@
 bhgc.wx
 =======
 
+Version: 0.2.0 [2020-02-16]
+
+NEW FEATURES:
+
+ * Added support for 'site' URL query.
+ 
+BUG FIX:
+
+ * Now 'make deploy' can deploy with the package on GitHub.
+ 
+
 Version: 0.1.3-9000 [2019-12-13]
 
-  * Turned into an R package.
+ * Turned into an R package.
 
 
 Version 0.1.3 (2019-05-24)
