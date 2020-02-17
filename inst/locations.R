@@ -46,6 +46,14 @@ locations <- list(
     launch_gps = c(37.911167, -122.624422)
   ),
 
+  "Marina State Beach, CA (50 ft)" = list(
+    seealso = c(
+      BHGC = "http://bhgc.org/sites/",
+      WindSlammer = NA
+    ),
+    launch_gps = c(36.699300, -121.809012)
+  ),
+
   "Big Sur, CA (3200 ft)" = list(
     seealso = c(
       BHGC = "http://bhgc.org/sites/",
