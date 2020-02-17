@@ -74,16 +74,28 @@ noaa_app <- function(selected_location = "Ed Levin, CA (1750 ft)", as = c("shiny
     )
   )
   
-  # Define server logic required to draw a histogram ----
+  # Define server logic
   server <- function(input, output, session) {
     observe({
       query <- parseQueryString(session$clientData$url_search)
-      site_idx <- query[['site_idx']]
-      site_idx <- as.integer(site_idx)
-      if (length(site_idx) > 0 && !is.na(site_idx)) {
-        value <- names(locations)[site_idx]
-        updateTextInput(session, "site", value = value)
-      }
+      if ("site" %in% names(query)) {
+        site <- query[["site"]]
+        site <- as.character(site)
+        if (length(site) > 0 && !is.na(site) && nzchar(site)) {
+	  site_idx <- grep(tolower(site), tolower(names(locations)))
+	  if (length(site_idx) >= 1L) {
+            value <- names(locations)[site_idx[1]]
+            updateTextInput(session, "site", value = value)
+          }
+        }
+      } else if ("site_idx" %in% names(query)) {
+        site_idx <- query[["site_idx"]]
+        site_idx <- as.integer(site_idx)
+        if (length(site_idx) > 0 && !is.na(site_idx)) {
+          value <- names(locations)[site_idx]
+          updateTextInput(session, "site", value = value)
+        }
+      }	
     })
   
     output$data_source <- renderUI({

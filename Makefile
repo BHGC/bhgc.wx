@@ -1,7 +1,7 @@
 SHELL:=/bin/bash
 
 start:
-	Rscript -e 'shiny::runApp(bhgc.wx.shiny::noaa_app())'
+	Rscript -e 'shiny::runApp(bhgc.wx::noaa_app(), port = 4042L)'
 
 deploy:
 	Rscript -e 'devtools::install_github("BHGC/bhgc.wx")'
@@ -9,7 +9,7 @@ deploy:
 
 
 #update: .FORCE
-#	Rscript -e "bhgc.weather::noaa_download_all()"
+#	Rscript -e "bhgc.wx::noaa_download_all()"
 #	git commit -am "NOAA data updated"
 #	git push
 
