@@ -8,8 +8,12 @@
 timezone <- local({
   tz <- Sys.timezone()
   function(new = NULL) {
-    if (!is.null(new)) tz <<- new
-    tz
+    if (!is.null(new)) {
+      tz <<- new
+      tz
+    } else {
+      invisible(tz)
+    }
   }
 })
 

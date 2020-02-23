@@ -3,7 +3,7 @@ bhgc.wx
 
 Version: 0.2.0-9000 [2020-02-23]
 
- * ...
+ * timezone(new) returns current time zone invisibly if a new one is set.
  
 
 Version: 0.2.0 [2020-02-16]
