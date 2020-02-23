@@ -3,8 +3,13 @@ bhgc.wx
 
 Version: 0.2.0-9000 [2020-02-23]
 
+NEW FEATURES:
+
  * timezone(new) returns current time zone invisibly if a new one is set.
  
+ * Argument 'days' for ggplot_noaa_{wind_direction,surface_wind}() can now
+   specify number of days forward by specifying a single scalar.
+   
 
 Version: 0.2.0 [2020-02-16]
 

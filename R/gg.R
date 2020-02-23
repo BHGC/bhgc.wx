@@ -42,7 +42,12 @@ ggplot_noaa_wind_direction <- function(values, x_limits = date_range(values), da
   cols <- color_map[c("red", "yellow", "green", "yellow", "red")[bins]]
 
   if (!is.null(days)) {
-    stopifnot(length(days) == 2L, all(is.finite(days)), all(days > 0))
+    stopifnot(all(is.finite(days)), all(days > 0))
+    if (length(days) == 1L) {
+      days <- seq(from = Sys.Date(), by = 1L, length.out = as.integer(days))
+    } else {
+      stopifnot(length(days) == 2L)
+    }
     tz <- timezone()
     x_limits[1] <- floor_date(as_datetime(days[1] + 1L, tz = tz), unit = "days")
     x_limits[2] <- ceiling_date(as_datetime(days[2] + 1L, tz = tz), unit = "days")
@@ -80,7 +85,12 @@ ggplot_noaa_surface_wind <- function(values, x_limits = date_range(values), days
   if (is.null(windows_size)) windows_size <- 1024
 
   if (!is.null(days)) {
-    stopifnot(length(days) == 2L, all(is.finite(days)), all(days > 0))
+    stopifnot(all(is.finite(days)), all(days > 0))
+    if (length(days) == 1L) {
+      days <- seq(from = Sys.Date(), by = 1L, length.out = as.integer(days))
+    } else {
+      stopifnot(length(days) == 2L)
+    }
     tz <- timezone()
     x_limits[1] <- floor_date(as_datetime(days[1] + 1L, tz = tz), unit = "days")
     x_limits[2] <- ceiling_date(as_datetime(days[2] + 1L, tz = tz), unit = "days	")
