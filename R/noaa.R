@@ -36,7 +36,7 @@ noaa_url <- function(lat, lon, format = c("xml", "html")) {
 #'
 #' @example incl/read_noaa.R
 #'
-#' @importFrom dplyr rename
+#' @importFrom dplyr everything rename select
 #' @importFrom magrittr %>%
 #' @importFrom lubridate as_datetime with_tz
 #' @importFrom utils file_test
@@ -97,10 +97,16 @@ read_noaa <- function(url, tz = timezone()) {
   wx <- as_tibble(wx)
 
   wx$last_updated <- rep(last_updated, times = nrow(wx))
-  wx$gps <- rep(list(gps), times = nrow(wx))
+  for (name in names(gps)) {
+    wx[[name]] <- gps[name]
+  }
+##  wx$gps <- rep(list(gps), times = nrow(wx))
 
   wx <- rename(wx, dewpoint = "temperature (dew point)", heat_index = "temperature (hourly)", surface_wind = "wind-speed (sustained)", cloud_cover = "cloud-amount (total)", precipitation_potential = "probability-of-precipitation (floating)", relative_humidity = "humidity (relative)", wind_direction = "direction (wind)", gust = "wind-speed (gust)", temperature = "temperature (hourly)", forecast = "hourly-qpf (floating)")
 
+  latitude <- longitude <- NULL  ## To please R CMD check
+  wx <- select(wx, last_updated, start, end, latitude, longitude, altitude, everything())
+  
   if (getOption("debug", FALSE)) {
     print(colnames(wx))
     print(wx)
