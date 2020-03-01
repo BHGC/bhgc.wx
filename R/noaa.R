@@ -161,3 +161,21 @@ save_noaa <- function(wx, filename = NULL, path = ".", skip = TRUE) {
   save_rds(wx, pathname)
 }
 
+
+
+#' Update NOAA Weather Forcast Data Base
+#'
+#' @param latitude,longitude (numeric) The coordinates of the location.
+#'
+#' @param path (character) Folder where to save forecast.
+#'
+#' @return (character) The pathname of the saved forecast.
+#'
+#' @export
+update_noaa <- function(latitude, longitude, path = ".") {
+  url <- noaa_url(lat = latitude, lon = longitude)
+  wx <- read_noaa(url)
+  pathname <- save_noaa(wx, path = path)
+  skipped <- isTRUE(attr(pathname, "skipped"))
+  if (skipped) NULL else pathname
+}

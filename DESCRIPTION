@@ -11,6 +11,7 @@ Imports:
     magrittr,
     lubridate,
     R.cache,
+    R.utils,
     tibble,
     xml2,
     cowplot,
