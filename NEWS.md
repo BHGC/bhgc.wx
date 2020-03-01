@@ -10,6 +10,8 @@ SIGNIFICANT CHANGES:
    
 NEW FEATURES:
 
+ * Add save_noaa() to save a weather forecast to an RDS file.
+
  * timezone(new) returns current time zone invisibly if a new one is set.
  
  * Argument 'days' for ggplot_noaa_{wind_direction,surface_wind}() can now

@@ -3,3 +3,4 @@
 **/*~
 rsconnect/
 raw_data/
+inst/reports/*.html
