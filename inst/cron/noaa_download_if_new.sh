@@ -22,7 +22,7 @@ create_dir() {
 ## Options
 lat=${1:-38.1384}
 lon=${2:--122.1956}
-to=${3}
+to=${3:-${BHGC_NOAA_TO}}
 echo "lat=$lat"
 echo "lat=$lon"
 echo "to=$to"
