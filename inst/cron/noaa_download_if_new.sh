@@ -58,7 +58,7 @@ mv "${tf}" "${xml}"
 
 ## Email?
 if [[ -n "$to" ]]; then
+    subject="NOAA Forecast update for (${lat},${lon})"
     body="New NOAA weather forecast for (${lat},${lon}) from ${timestamp}. See attached figure."
-    echo "$body" | mail -s "NOAA Forecast update for (${lat},${lon})" "$to"
+    echo "${body}" | mail -a "${png}" -s "${subject}" "${to}"
 fi
-
