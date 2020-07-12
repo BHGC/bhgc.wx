@@ -34,10 +34,35 @@ site=${1}
 shift
 
 case "$site" in
+    bluerock)
+	label="Blue Rock, Vallejo, CA"
+        lat=38.138440
+        lon=-122.195634
+	;;
+    dumps)
+	label="The Dumps, Pacifica, CA"
+        lat=37.672164
+        lon=-122.493943
+	;;
+    edlevin-600)
+	label="Ed Levin (600 ft), Milpitas, CA"
+        lat=37.461324
+        lon=-121.859979
+	;;
+    edlevin-1750)
+	label="Ed Levin (1750 ft), Milpitas, CA"
+        lat=37.475389
+        lon=-121.861305
+	;;
     lakecourt)
 	label="Lakecourt Dune, Marina, CA"
         lat=38.1384
         lon=-122.1956
+	;;
+    mttam-b)
+	label="Mt Tam, (Launch B), Stinson Beach, CA"
+        lat=37.911167
+        lon=-122.624422
 	;;
     *)
 	error "Unknown site: $site"
