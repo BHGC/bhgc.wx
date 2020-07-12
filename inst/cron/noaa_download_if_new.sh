@@ -27,8 +27,7 @@ create_dir() {
 
 [[ $# -eq 0 ]] && error "No site specified"
 
-debug=false
-debug=true
+debug=${BHGC_NOAA_DEBUG:-false}
 
 ## Options
 site=${1}
