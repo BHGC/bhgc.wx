@@ -132,7 +132,7 @@ if [[ $# -gt 0 ]]; then
     time=$(echo "${timestamp}" | sed -E 's/(.*)T(.*)([-+].*)/\2/g')
     utc=$(echo "${timestamp}" | sed -E 's/(.*)T(.*)([-+].*)/\3/g')
     NL=$'\n'
-    body="New NOAA weather forecast for ${label} from ${wfo} at ${time} on ${date} (UTC ${utc}.${NL}"
+    body="New NOAA weather forecast for ${label} at ${time} on ${date} (UTC ${utc}) by the ${wfo} office.${NL}"
     if [[ -n "${BHGC_NOAA_CONDITIONS}" ]]; then
         body="${body}${NL}* ${BHGC_NOAA_CONDITIONS}${NL}"
     fi
@@ -140,6 +140,7 @@ if [[ $# -gt 0 ]]; then
     body="${body}${NL}* ${url}${NL}"    
     url="https://forecast.weather.gov/MapClick.php?w0=t&w1=td&w2=wc&w3=sfcwind&w4=sky&w5=pop&w6=rh&w7=thunder&w8=rain&Submit=Submit&&site=mtr&bw=0&textField1=${lat}&textField2=${lon}&AheadHour=0&FcstType=digital"
     body="${body}${NL}* ${url}${NL}"
+    body="${body}${NL}${NL}This message was sent on $(date --rfc-3339=seconds)${NL}"
     debug "${body}"
     
     if ! $dryrun; then
