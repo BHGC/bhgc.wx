@@ -7,13 +7,6 @@ error() {
     exit 1
 }
 
-skip() {
-    {
-        echo "SKIP: $*"
-    } >&2
-    exit 0
-}
-
 debug() {
     $debug && {
         echo "DEBUG: $*"
@@ -29,6 +22,8 @@ create_dir() {
 
 debug=${BHGC_NOAA_DEBUG:-false}
 dryrun=${BHGC_NOAA_DRYRUN:-false}
+force=${BHGC_NOAA_FORCE:-false}
+skip=${BHGC_NOAA_SKIP:-true}
 
 ## Options
 site=${1}
@@ -87,6 +82,9 @@ debug "lat=${lat}"
 debug "lon=${lon}"
 debug "zcode=${zcode}"
 debug "to=$*"
+debug "dryrun=${dryrun}"
+debug "force=${force}"
+debug "skip=${skip}"
 
 root=$HOME/.cache/bhgc/sites
 create_dir "$root"
@@ -96,7 +94,7 @@ create_dir "$path"
 debug "path=${path}"
 
 url="https://forecast.weather.gov/MapClick.php?lat=${lat}&lon=${lon}&FcstType=digitalDWML"
-debug "url=${url}"
+debug "XML URL: ${url}"
 
 tf=$(mktemp)
 curl --silent -o "${tf}" "${url}"
@@ -112,20 +110,35 @@ debug "wfo=${wfo}"
 xml="${path}/${site},${timestamp},${wfo}.xml"
 debug "xml=${xml}"
 
-## Already downloaded
-[[ -f "$xml" ]] && { rm "$tf"; exit 0; }
+## Already downloaded?
+if ! $force && $skip && [[ -f "${xml}" ]]; then
+    debug "Skipping. Already downloaded: ${xml}"
+    rm "${tf}"
+    exit 0
+fi
+debug "XML file: $(ls -l "${xml}")"
 
 url="https://forecast.weather.gov/meteograms/Plotter.php?lat=${lat}&lon=${lon}&wfo=${wfo}&zcode=${zcode}&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111110000000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=&bw=0&hrspan=48&pqpfhr=6&psnwhr=6"
 debug "PNG URL: ${url}"
 png="${path}/${site},${timestamp},${wfo}.png"
-curl --silent -o "${png}" "${url}"
-debug "PNG size: $(ls -l "${png}")"
+## Already downloaded?
+if ! $force && $skip && [[ -f "${png}" ]]; then
+    debug "Skipping. Already downloaded: ${png}"
+else
+    curl --silent -o "${png}" "${url}"
+fi
+debug "PNG file: $(ls -l "${png}")"
 
-mv "${tf}" "${xml}"
+if ! $force && $skip && [[ -f "${xml}" ]]; then
+    [[ -f "${tf}" ]] && rm "${tf}"
+else
+    mv "${tf}" "${xml}"
+fi
 
 ## Email?
 if [[ $# -gt 0 ]]; then
-    debug "Sending email to $*"
+    debug "Composing email:"
+    debug "Additional options to 'mail': $*"
     subject="NOAA Forecast for ${label}"
     debug "subject=${subject}"
     date=$(echo "${timestamp}" | sed -E 's/(.*)T(.*)([-+].*)/\1/g')
@@ -141,10 +154,14 @@ if [[ $# -gt 0 ]]; then
     url="https://forecast.weather.gov/MapClick.php?w0=t&w1=td&w2=wc&w3=sfcwind&w4=sky&w5=pop&w6=rh&w7=thunder&w8=rain&Submit=Submit&&site=mtr&bw=0&textField1=${lat}&textField2=${lon}&AheadHour=0&FcstType=digital"
     body="${body}${NL}* ${url}${NL}"
     body="${body}${NL}${NL}This message was sent on $(date --rfc-3339=seconds)${NL}"
-    debug "${body}"
+    debug "body=${NL}${body}"
     
-    if ! $dryrun; then
+    debug "Email command: printf \"%s\" \"\${body}\" | mail -a \"\${png}\" -s \"\${subject}\" $*"
+    if $dryrun; then
+        debug "Email result: N/A (dryrun=true)"
+    else
         # shellcheck disable=SC2086,SC2048
         printf "%s" "${body}" | mail -a "${png}" -s "${subject}" $*
+        debug "Email result: $?"
     fi
 fi
