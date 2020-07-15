@@ -116,7 +116,6 @@ if ! $force && $skip && [[ -f "${xml}" ]]; then
     rm "${tf}"
     exit 0
 fi
-debug "XML file: $(ls -l "${xml}")"
 
 url="https://forecast.weather.gov/meteograms/Plotter.php?lat=${lat}&lon=${lon}&wfo=${wfo}&zcode=${zcode}&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111110000000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=&bw=0&hrspan=48&pqpfhr=6&psnwhr=6"
 debug "PNG URL: ${url}"
@@ -134,6 +133,7 @@ if ! $force && $skip && [[ -f "${xml}" ]]; then
 else
     mv "${tf}" "${xml}"
 fi
+debug "XML file: $(ls -l "${xml}")"
 
 ## Email?
 if [[ $# -gt 0 ]]; then
