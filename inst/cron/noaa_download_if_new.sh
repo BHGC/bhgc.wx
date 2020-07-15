@@ -146,7 +146,7 @@ if [[ $# -gt 0 ]]; then
     time=$(echo "${timestamp}" | sed -E 's/(.*)T(.*)([-+].*)/\2/g')
     utc=$(echo "${timestamp}" | sed -E 's/(.*)T(.*)([-+].*)/\3/g')
     NL=$'\n'
-    body="New NOAA weather forecast for ${label} at ${time} on ${date} (UTC ${utc}) by the ${wfo} office.${NL}"
+    body="New NOAA weather forecast for ${label} at ${time} on ${date} (UTC ${utc}) by the ${wfo^^} office.${NL}"
     if [[ -n "${BHGC_NOAA_CONDITIONS}" ]]; then
         body="${body}${NL}* ${BHGC_NOAA_CONDITIONS}${NL}"
     fi
