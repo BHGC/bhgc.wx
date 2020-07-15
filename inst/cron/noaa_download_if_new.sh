@@ -76,6 +76,7 @@ case "$site" in
 	error "Unknown site: $site"
 esac
 
+debug "Current time: $(date --rfc-3339=seconds)"
 debug "site=${site}"
 debug "label=${label}"
 debug "lat=${lat}"
