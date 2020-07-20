@@ -59,7 +59,7 @@ case "$site" in
 	## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4754&lon=-121.8613&wfo=MTR&zcode=CAZ511&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
 	;;
     lakecourt)
-	label="Lakecourt Dune, Marina, CA"
+	label="Lake Court Dune, Marina, CA"
         lat=36.6835
         lon=-121.8114
 	zcode=CAZ530
