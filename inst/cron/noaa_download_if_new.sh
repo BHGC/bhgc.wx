@@ -154,6 +154,8 @@ if [[ $# -gt 0 ]]; then
     body="${body}${NL}* ${url}${NL}"    
     url="https://forecast.weather.gov/MapClick.php?w0=t&w1=td&w2=wc&w3=sfcwind&w4=sky&w5=pop&w6=rh&w7=thunder&w8=rain&Submit=Submit&&site=mtr&bw=0&textField1=${lat}&textField2=${lon}&AheadHour=0&FcstType=digital"
     body="${body}${NL}* ${url}${NL}"
+    url="https://forecast.weather.gov/product.php?site=${wfo^^}&issuedby=${wfo^^}&product=AFD&format=TXT&glossary=1"
+    body="${body}${NL}* ${url}${NL}"
 #    body="${body}${NL}${NL}This message was sent on $(date --rfc-3339=seconds)${NL}"
     debug "body=${NL}${body}"
     
