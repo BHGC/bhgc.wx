@@ -122,9 +122,10 @@ url="https://forecast.weather.gov/meteograms/Plotter.php?lat=${lat}&lon=${lon}&w
 debug "PNG URL: ${url}"
 png="${path}/${site},${timestamp},${wfo}.png"
 ## Already downloaded?
-if ! $force && $skip && [[ -f "${png}" ]]; then
-    debug "Skipping. Already downloaded: ${png}"
+if ! $force && [[ -f "${png}" ]]; then
+    debug "Skipping because already downloaded: ${png}"
 else
+    debug "Downloading PNG file"
     curl --silent -o "${png}" "${url}"
 fi
 debug "PNG file: $(ls -l "${png}")"
