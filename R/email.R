@@ -48,14 +48,28 @@ email_body <- function(label = NULL, lat = NULL, lon = NULL, wfo = NULL, timesta
   body <- rstring(file = rspfile, args = args)
   body <- structure(body, class = "html", html = TRUE)
 
+  attr(body, "args") <- args
+  
   body
 }
 
 
-#' @importFrom blastula compose_email
+#' @importFrom utils file_test
+#' @importFrom blastula compose_email creds_file smtp_send
 #' @export
-make_email <- function(...) {
+send_email <- function(..., to, from, subject = NULL, cc = NULL, bcc = NULL, credentials = NULL) {
+  if (is.null(credentials)) {
+    credentials <- Sys.getenv("R_BHGC_NOAA_EMAIL_CREDENTIALS", NA_character_)
+    if (is.na(credentials)) credentials <- NULL
+  }
+  if (file_test("-f", credentials)) {
+    credentials <- creds_file(credentials)
+  }
   body <- email_body(...)
+  args <- attr(body, "args")
+  if (is.null(subject)) {
+    subject <- sprintf("NOAA Forecast for %s", args$label)
+  }
   email <- compose_email(body = body)
-  writeLines(email$html_str,  con = "email.html")
+  smtp_send(email, to = to, from = from, subject = subject, cc = cc, bcc = bcc, credentials = credentials)
 }

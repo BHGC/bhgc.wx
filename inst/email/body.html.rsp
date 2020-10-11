@@ -1,27 +1,12 @@
-<%---
-# Example:
-# Rscript -e R.rsp::rcat --args --file=wx.md.rsp --timestamp="2020-10-08T13:26:25-07:00" --wfo="mtr" --imgfile="imgs/lakecourt,2020-10-10T15_02_14-07_00,mtr.png" --label="Blue Rock, Vallejo, CA" --lat="38.1384" --lon="-122.1956"
-
-# Input arguments
-timestamp <- R.utils::cmdArg("timestamp")
-imgfile <- R.utils::cmdArg("imgfile")
-label <- toupper(R.utils::cmdArg("label", ""))
-lat <- toupper(R.utils::cmdArg("lat", NA_real_))
-lon <- toupper(R.utils::cmdArg("lon", NA_real_))
-wfo <- toupper(R.utils::cmdArg("wfo", ""))
----%>
-
 <%
+stopifnot(nzchar(timestamp))
+timestamp <- lubridate::as_datetime(timestamp, tz = Sys.timezone())
 stopifnot(utils::file_test("-f", imgfile))
 stopifnot(nzchar(label))
 stopifnot(!is.na(lat))
 stopifnot(!is.na(lon))
 stopifnot(nchar(wfo) == 3L)
-pattern <- "(.*)T(.*)([-+].*)"
-stopifnot(grepl(pattern, timestamp))
-date <- gsub(pattern, "\\1", timestamp)
-time <- gsub(pattern, "\\2", timestamp)
-utc  <- gsub(pattern, "\\3", timestamp)
+wfo <- toupper(wfo)
 %>
 
 New NOAA weather forecast for <%= label %> at <%= format(timestamp, format = "%T") %> on <%= format(timestamp, format = "%F") %> (UTC <%= format(timestamp, format = "%z") %>) by the <%= wfo %> office.

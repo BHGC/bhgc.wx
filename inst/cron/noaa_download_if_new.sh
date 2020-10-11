@@ -168,4 +168,7 @@ if [[ $# -gt 0 ]]; then
         printf "%s" "${body}" | mail -a "${png}" -s "${subject}" $*
         debug "Email result: $?"
     fi
+
+    debug "HTML email:"
+    Rscript -e bhgc.wx::send_email --args --label="${label}" --lon="${lon}" --lat="${lat}" --wfo="${wfo}" --timestamp="${timestamp}" --imgfile="${png}" --from="henrik.bengtsson@gmail.com" --to="henrik.bengtsson+noaa@gmail.com"
 fi
