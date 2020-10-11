@@ -36,7 +36,7 @@ noaa_url <- function(lat, lon, format = c("xml", "html")) {
 #'
 #' @example incl/read_noaa.R
 #'
-#' @importFrom dplyr rename
+#' @importFrom dplyr everything rename select
 #' @importFrom magrittr %>%
 #' @importFrom lubridate as_datetime with_tz
 #' @importFrom utils file_test
@@ -97,10 +97,16 @@ read_noaa <- function(url, tz = timezone()) {
   wx <- as_tibble(wx)
 
   wx$last_updated <- rep(last_updated, times = nrow(wx))
-  wx$gps <- rep(list(gps), times = nrow(wx))
+  for (name in names(gps)) {
+    wx[[name]] <- gps[name]
+  }
+##  wx$gps <- rep(list(gps), times = nrow(wx))
 
   wx <- rename(wx, dewpoint = "temperature (dew point)", heat_index = "temperature (hourly)", surface_wind = "wind-speed (sustained)", cloud_cover = "cloud-amount (total)", precipitation_potential = "probability-of-precipitation (floating)", relative_humidity = "humidity (relative)", wind_direction = "direction (wind)", gust = "wind-speed (gust)", temperature = "temperature (hourly)", forecast = "hourly-qpf (floating)")
 
+  latitude <- longitude <- NULL  ## To please R CMD check
+  wx <- select(wx, last_updated, latitude, longitude, altitude, everything())
+  
   if (getOption("debug", FALSE)) {
     print(colnames(wx))
     print(wx)
@@ -108,3 +114,68 @@ read_noaa <- function(url, tz = timezone()) {
 
   wx
 } ## read_noaa()
+
+
+
+#' Save NOAA Weather Forcast to File
+#'
+#' @param wx (tibble) A NOAA Weather Forecast.
+#'
+#' @param filename (character) The filename of the saved RDS file.
+#' If NULL (default), then the filename is uniquely created from the GPS
+#' coordinates and the timestamp of forecast.
+#'
+#' @param path (character) Folder where to save forecast.
+#'
+#' @param skip (logical) If TRUE, then an already saved forecast will not
+#' be overwritten.
+#'
+#' @return (character) The pathname of the saved forecast.
+#' If skipped, then attribute `skipped` is set to TRUE.
+#'
+#' @importFrom utils file_test
+#' @export
+save_noaa <- function(wx, filename = NULL, path = ".", skip = TRUE) {
+  stopifnot(file_test("-d", path))
+  
+  if (is.null(filename)) {
+    last_updated <- unique(wx[["last_updated"]])
+    stopifnot(length(last_updated) == 1L)
+    last_updated_tag <- sprintf("last_updated=%s", format(last_updated, "%Y%m%dT%H%M%S%z"))
+    
+    gps <- unique(wx[,c("latitude", "longitude")])
+    stopifnot(nrow(gps) == 1L)
+    gps <- unlist(as.list(gps))
+    gps_tag <- paste(sprintf("%s=%s", names(gps), gps), collapse = ",")
+    filename <- sprintf("noaa-forecast,%s,%s.rds", gps_tag, last_updated_tag)
+  }
+  stopifnot(is.character(filename), length(filename) == 1L, !is.na(filename))
+  pathname <- file.path(path, filename)
+
+  ## Already existing?
+  if (skip && file_test("-f", pathname)) {
+    attr(pathname, "skipped") <- TRUE
+    return(invisible(pathname))
+  }
+
+  save_rds(wx, pathname)
+}
+
+
+
+#' Update NOAA Weather Forcast Data Base
+#'
+#' @param latitude,longitude (numeric) The coordinates of the location.
+#'
+#' @param path (character) Folder where to save forecast.
+#'
+#' @return (character) The pathname of the saved forecast.
+#'
+#' @export
+update_noaa <- function(latitude, longitude, path = ".") {
+  url <- noaa_url(lat = latitude, lon = longitude)
+  wx <- read_noaa(url)
+  pathname <- save_noaa(wx, path = path)
+  skipped <- isTRUE(attr(pathname, "skipped"))
+  if (skipped) NULL else pathname
+}

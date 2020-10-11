@@ -1,0 +1,43 @@
+---
+params:
+  site:
+    value: Ed Levin, CA (1750 ft)
+  launch_gps:
+    value: c(37.4611, -121.8646)
+
+title: "NOAA Forecast: `r params$site`"
+output: html_document
+---
+
+
+```{r, echo = FALSE}
+library(bhgc.wx)
+library(ggplot2)
+theme_set(theme_gray())
+suppressPackageStartupMessages(library(cowplot))
+
+dummy <- timezone("America/Los_Angeles")
+locations <- bhgc.wx:::noaa_locations()
+location <- locations[[params$site]]
+stopifnot(!is.null(location))
+
+url <- noaa_url(location$launch_gps)
+wx <- read_noaa(url)
+```
+
+Forcast from: [`r as.character(wx$last_updated[1], usetz = TRUE)`](`r noaa_url(location$launch_gps, format = "html")`)  
+
+
+```{r, echo = FALSE, warning = FALSE}
+gg1 <- bhgc.wx:::ggplot_noaa_wind_direction(wx, days = 2L)
+gg2 <- bhgc.wx:::ggplot_noaa_surface_wind(wx, days = 2L)
+res <- plot_grid(gg1, gg2, ncol = 1L, rel_heights = c(1,2), align = "v")
+res
+```
+
+
+---
+
+<div class="footer">
+Report produced on: `r format(Sys.time(), "%Y-%m-%d %H:%M:%S%z")`
+</div>

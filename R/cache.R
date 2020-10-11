@@ -1,7 +1,12 @@
 #' @importFrom R.cache getCachePath
 cache_path <- function(wx) {
   stopifnot(inherits(wx, "data.frame"))
-  gps <- wx$gps[[1]]
+  
+  gps <- wx[, c("latitude", "longitude", "altitude")]
+  gps <- unique(gps)
+  stopifnot(nrow(gps) == 1L)
+  gps <- as.list(gps)
+  
   dir <- paste(sprintf("%s=%s", names(gps), gps), collapse=",")
   path <- getCachePath(dirs = c("bhgc.wx", dir))
   path

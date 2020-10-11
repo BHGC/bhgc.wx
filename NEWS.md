@@ -1,6 +1,26 @@
 bhgc.wx
 =======
 
+Version: 0.3.0 [2020-02-29]
+
+SIGNIFICANT CHANGES:
+
+ * read_noaa() now return GPS coordinates as three separate columns
+   'latitude', 'longitude', and 'altitude'.
+   
+NEW FEATURES:
+
+ * Add save_noaa() to save a weather forecast to an RDS file.
+
+ * Add update_noaa() to save weather forcast to database if updated.
+
+ * timezone(new) returns current time zone invisibly if a new one is set.
+ 
+ * Argument 'days' for ggplot_noaa_{wind_direction,surface_wind}() can now
+   specify number of days forward by specifying a single scalar.
+
+
+
 Version: 0.2.0 [2020-02-16]
 
 NEW FEATURES:
