@@ -1,6 +1,13 @@
 bhgc.wx
 =======
 
+Version: 0.3.0-9000 [2020-10-10]
+
+SIGNIFICANT CHANGES:
+
+ * Prototyping HTML emails.
+
+
 Version: 0.3.0 [2020-02-29]
 
 SIGNIFICANT CHANGES:

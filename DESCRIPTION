@@ -1,5 +1,5 @@
 Package: bhgc.wx
-Version: 0.3.0
+Version: 0.3.0-9000
 Title: The BHGC Weather Package
 Description: A set of tools for Berkeley Hang Gliding Club (BHGC) weather services.
 Authors@R: c(
@@ -7,16 +7,18 @@ Authors@R: c(
           email = "hb@bhgc.org"))
 License: GPL (>= 3)
 Imports:
+    blastula,
+    cowplot,
     dplyr,
-    magrittr,
+    ggplot2,
     lubridate,
+    magrittr,
     R.cache,
     R.utils,
+    R.rsp,
+    shiny,
     tibble,
-    xml2,
-    cowplot,
-    ggplot2,
-    shiny
+    xml2
 URL: https://github.com/BHGC/bhgc.wx
 BugReports: https://github.com/BHGC/bhgc.wx/issues
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1
