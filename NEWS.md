@@ -1,7 +1,7 @@
 bhgc.wx
 =======
 
-Version: 0.2.0-9000 [2020-02-29]
+Version: 0.3.0 [2020-02-29]
 
 SIGNIFICANT CHANGES:
 
