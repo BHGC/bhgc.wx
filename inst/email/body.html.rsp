@@ -1,4 +1,6 @@
 <%
+## This HTML template is a cut-down version of what
+## blastula::blastula_template() produces
 stopifnot(nzchar(timestamp))
 timestamp <- lubridate::as_datetime(timestamp, tz = Sys.timezone())
 stopifnot(utils::file_test("-f", imgfile))
@@ -8,13 +10,68 @@ stopifnot(!is.na(lon))
 stopifnot(nchar(wfo) == 3L)
 wfo <- toupper(wfo)
 %>
-
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"> <!-- utf-8 works for most cases -->
+    <meta name="viewport" content="width=device-width"> <!-- Forcing initial-scale shouldn't be necessary -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!-- Use the latest (edge) version of IE rendering engine -->
+    <meta name="x-apple-disable-message-reformatting">  <!-- Disable auto-scale in iOS 10 Mail entirely -->
+    <meta name="format-detection" content="telephone=no,address=no,email=no,date=no,url=no"> <!-- Tell iOS not to automatically link certain text strings. -->
+    <meta name="color-scheme" content="light">
+    <meta name="supported-color-schemes" content="light">
+    <!-- What it does: Makes background images in 72ppi Outlook render at correct size. -->
+    <!--[if gte mso 9]>
+    <xml>
+        <o:OfficeDocumentSettings>
+            <o:AllowPNG/>
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+        </o:OfficeDocumentSettings>
+    </xml>
+    <![endif]-->
+  <title></title>
+  <style>
+body {
+  font-family: Helvetica, sans-serif;
+  font-size: 14px;
+}
+.content {
+  background-color: white;
+}
+.content .message-block {
+  margin-bottom: 24px;
+}
+.header .message-block, .footer message-block {
+  margin-bottom: 12px;
+}
+img {
+  max-width: 100%;
+}
+@media only screen and (max-width: 767px) {
+  .container {
+    width: 100%;
+  }
+  .articles, .articles tr, .articles td {
+    display: block;
+    width: 100%;
+  }
+  .article {
+    margin-bottom: 24px;
+  }
+}
+  </style>
+</head>
+  
+<body style="background-color:white; font-family:Helvetica,sans-serif; font-weight:normal; color:#222; margin:0; padding:0; max-width:1000px">
+    
+<p>
 New NOAA weather forecast for <%= label %> at <%= format(timestamp, format = "%T") %> on <%= format(timestamp, format = "%F") %> (UTC <%= format(timestamp, format = "%z") %>) by the <%= wfo %> office.
+</p>
 
-<img src="<%= blastula:::get_image_uri(imgfile) %>"/><br>
+<a href="https://forecast.weather.gov/MapClick.php?w0=t&w1=td&w2=wc&w3=sfcwind&w4=sky&w5=pop&w6=rh&w7=thunder&w8=rain&Submit=Submit&&site=mtr&bw=0&textField1=<%= lat %>&textField2=<%= lon %>&AheadHour=0&FcstType=graphical"><img src="<%= blastula:::get_image_uri(imgfile) %>"/></a><br>
 
-<a href="https://forecast.weather.gov/MapClick.php?w0=t&w1=td&w2=wc&w3=sfcwind&w4=sky&w5=pop&w6=rh&w7=thunder&w8=rain&Submit=Submit&&site=mtr&bw=0&textField1=<%= lat %>&textField2=<%= lon %>&AheadHour=0&FcstType=graphical">Graphical</a>
-
-<a href="https://forecast.weather.gov/MapClick.php?w0=t&w1=td&w2=wc&w3=sfcwind&w4=sky&w5=pop&w6=rh&w7=thunder&w8=rain&Submit=Submit&&site=mtr&bw=0&textField1=<%= lat %>&textField2=<%= lon %>&AheadHour=0&FcstType=digital">Digital</a>
-   
+<a href="https://forecast.weather.gov/MapClick.php?w0=t&w1=td&w2=wc&w3=sfcwind&w4=sky&w5=pop&w6=rh&w7=thunder&w8=rain&Submit=Submit&&site=mtr&bw=0&textField1=<%= lat %>&textField2=<%= lon %>&AheadHour=0&FcstType=digital">Tabular Version</a>,    
 <a href="https://forecast.weather.gov/product.php?site=<%= wfo %>&issuedby=<%= wfo %>&product=AFD&format=TXT&glossary=1">Area Forecast Discussion</a>
+
+</body>
+</html>

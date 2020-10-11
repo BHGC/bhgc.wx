@@ -169,6 +169,8 @@ if [[ $# -gt 0 ]]; then
         debug "Email result: $?"
     fi
 
-    debug "HTML email:"
-    Rscript -e bhgc.wx::send_email --args --label="${label}" --lon="${lon}" --lat="${lat}" --wfo="${wfo}" --timestamp="${timestamp}" --imgfile="${png}" --from="henrik.bengtsson@gmail.com" --to="henrik.bengtsson+noaa@gmail.com"
+    if [[ -n "${R_BHGC_NOAA_EMAIL_CREDENTIALS}" ]]; then
+        debug "HTML email:"
+        Rscript -e bhgc.wx::send_email --args --label="${label}" --lon="${lon}" --lat="${lat}" --wfo="${wfo}" --timestamp="${timestamp}" --imgfile="${png}" --from="${BHGC_NOAA_FROM}" --to="${BHGC_NOAA_TO}" --bcc="${BHGC_NOAA_BCC}"
+    fi
 fi

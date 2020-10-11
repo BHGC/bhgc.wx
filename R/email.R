@@ -56,6 +56,7 @@ email_body <- function(label = NULL, lat = NULL, lon = NULL, wfo = NULL, timesta
 
 #' @importFrom utils file_test
 #' @importFrom blastula compose_email creds_file smtp_send
+#' @importFrom htmltools HTML
 #' @export
 send_email <- function(..., to, from, subject = NULL, cc = NULL, bcc = NULL, credentials = NULL) {
   if (is.null(credentials)) {
@@ -70,6 +71,6 @@ send_email <- function(..., to, from, subject = NULL, cc = NULL, bcc = NULL, cre
   if (is.null(subject)) {
     subject <- sprintf("NOAA Forecast for %s", args$label)
   }
-  email <- compose_email(body = body)
+  email <- compose_email(body = body, template = function(html_body, ...) HTML(html_body))
   smtp_send(email, to = to, from = from, subject = subject, cc = cc, bcc = bcc, credentials = credentials)
 }
