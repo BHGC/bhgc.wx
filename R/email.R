@@ -5,7 +5,7 @@
 #' @importFrom lubridate as_datetime
 #' @importFrom utils file_test
 #' @export
-email_body <- function(label = NULL, lat = NULL, lon = NULL, wfo = NULL, timestamp = NULL, imgfile = NULL) {
+email_body <- function(label = NULL, lat = NULL, lon = NULL, wfo = NULL, timestamp = NULL, imgfile = NULL, xmlfile = NULL) {
   if (is.null(imgfile)) imgfile <- cmdArg("imgfile")
   if (is.null(label)) label <- toupper(cmdArg("label", ""))
   if (is.null(lat)) lat <- toupper(cmdArg("lat", NA_real_))
@@ -35,8 +35,17 @@ email_body <- function(label = NULL, lat = NULL, lon = NULL, wfo = NULL, timesta
   timestamp <- as_datetime(timestamp, tz = Sys.timezone())
   if (is.na(timestamp)) stop("Unknown timestamp format: ", sQuote(value))
 
+  args <- list(
+    label = label,
+    timestamp = timestamp,
+    lat = lat,
+    lon = lon,
+    wfo = wfo,
+    imgfile = imgfile
+  )
+
   rspfile <- system.file("email", "body.html.rsp", package = .packageName, mustWork = TRUE)
-  body <- rstring(rspfile, args = args)
+  body <- rstring(file = rspfile, args = args)
   body <- structure(body, class = "html", html = TRUE)
 
   body
