@@ -15,7 +15,7 @@ locations <- list(
     launch_gps = c(37.4611, -121.8646)
   ),
 
-  "Blue Rock, Vallejo, CA (100 ft)" = list(
+  "Blue Rock, Vallejo, CA (720 ft)" = list(
     seealso = c(
       BHGC = "http://bhgc.org/sites/",
       WindSlammer = NA
@@ -23,7 +23,15 @@ locations <- list(
     launch_gps = c(38.1379, -122.195)
   ),
 
-  "Gateway, Benicia, CA (300 ft)" = list(
+  "Channing East, CA (660 ft)" = list(
+    seealso = c(
+      BHGC = "http://bhgc.org/sites/",
+      WindSlammer = NA
+    ),
+    launch_gps = c(38.1015,-122.181)
+  ),
+
+  "Gateway, Benicia, CA (500 ft)" = list(
     seealso = c(
       BHGC = "http://bhgc.org/sites/",
       WindSlammer = NA
