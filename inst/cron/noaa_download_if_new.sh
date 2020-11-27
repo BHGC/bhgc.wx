@@ -37,6 +37,12 @@ case "$site" in
 	zcode=CAZ018
 	## https://forecast.weather.gov/meteograms/Plotter.php?lat=38.1384&lon=-122.1956&wfo=MTR&zcode=CAZ018&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
 	;;
+    channing-east)
+	label="Channing East, Benicia, CA"
+        lat=38.101500
+        lon=-122.181000
+	zcode=CAZ018
+	;;
     dumps)
 	label="The Dumps, Pacifica, CA"
         lat=37.6722
