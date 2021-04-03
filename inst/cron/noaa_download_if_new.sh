@@ -154,7 +154,7 @@ debug "XML file: $(ls -l "${xml}")"
 if [[ $# -gt 0 ]]; then
     debug "Composing email:"
     debug "Additional options to 'mail': $*"
-    subject="NOAA Forecast for ${label}"
+    subject="NOAA: ${label}"
     debug "subject=${subject}"
     date=$(echo "${timestamp}" | sed -E 's/(.*)T(.*)([-+].*)/\1/g')
     time=$(echo "${timestamp}" | sed -E 's/(.*)T(.*)([-+].*)/\2/g')
