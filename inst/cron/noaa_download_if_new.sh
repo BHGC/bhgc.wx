@@ -30,21 +30,28 @@ site=${1}
 shift
 
 case "$site" in
+    blackcap)
+        label="Black Cap (6250 ft), OR"
+        lat=36.818344
+        lon=-118.0429785
+        zcode=ORZ031
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=42.2043&lon=-120.3301&wfo=MFR&zcode=ORZ031&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
     bluerock)
-        label="Blue Rock, Vallejo, CA"
+        label="Blue Rock, Vallejo (550 ft), CA"
         lat=38.1384
         lon=-122.1956
         zcode=CAZ018
         ## https://forecast.weather.gov/meteograms/Plotter.php?lat=38.1384&lon=-122.1956&wfo=MTR&zcode=CAZ018&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
         ;;
     channing-east)
-        label="Channing East, Benicia, CA"
+        label="Channing East, Benicia (660 ft), CA"
         lat=38.101500
         lon=-122.181000
         zcode=CAZ018
         ;;
     dumps)
-        label="The Dumps, Pacifica, CA"
+        label="The Dumps, Pacifica (100 ft), CA"
         lat=37.6722
         lon=-122.4939
         zcode=CAZ509
@@ -86,18 +93,32 @@ case "$site" in
         ## view-source:https://forecast.weather.gov/meteograms/Plotter.php?lat=37.6722&lon=-122.4939&wfo=MTR&zcode=CAZ509&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
         ;;
     mttam-b)
-        label="Mt Tam, (Launch B), Stinson Beach, CA"
+        label="Mt Tam, (Launch B; 1950 ft), Stinson Beach, CA"
         lat=37.9112
         lon=-122.6244
         zcode=CAZ507
         ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.9112&lon=-122.6244&wfo=MTR&zcode=CAZ507&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
         ;;
     slide)
-        label="Slide Mountain, NV"
+        label="Slide Mountain (8200 ft), NV"
         lat=39.3199
         lon=-119.8674
         zcode=NVZ002
         ## https://forecast.weather.gov/meteograms/Plotter.php?lat=39.3199&lon=-119.8674&wfo=REV&zcode=NVZ002&gset=18&gdiff=8&unit=0&tinfo=PY8&ahour=0&pcmd=11011111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
+    sugarhill)
+        label="Sugar Hill (7200 ft), CA"
+        lat=41.806521
+        lon=-120.328989
+        zcode=CAZ085
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=41.8065&lon=-120.329&wfo=MFR&zcode=CAZ085&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
+    sweetandlow)
+        label="Sweet and Low (5650 ft), VA"
+        lat=41.828500
+        lon=-120.346483
+        zcode=CAZ085
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=41.8285&lon=-120.3465&wfo=MFR&zcode=CAZ085&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
         ;;
     *)
         error "Unknown site: $site"
