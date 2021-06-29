@@ -114,7 +114,7 @@ case "$site" in
         ## https://forecast.weather.gov/meteograms/Plotter.php?lat=41.8065&lon=-120.329&wfo=MFR&zcode=CAZ085&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
         ;;
     sweetandlow)
-        label="Sweet and Low (5650 ft), VA"
+        label="Sweet and Low (5650 ft), CA"
         lat=41.828500
         lon=-120.346483
         zcode=CAZ085
