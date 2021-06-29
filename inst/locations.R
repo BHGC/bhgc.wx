@@ -47,6 +47,14 @@ locations <- list(
     launch_gps = c(38.0909,-122.1696)
   ),
 
+  "Hat Creek, CA (4500 ft)" = list(
+    seealso = c(
+      BHGC = "https://bhgc.org/sites/bayarea/",
+      WindSlammer = NA
+    ),
+    launch_gps = c(40.843055, -121.427468)
+  ),
+
   "Mussel Rock/The Dumps, CA (100 ft)" = list(
     seealso = c(
       BHGC = "https://bhgc.org/sites/bayarea/",

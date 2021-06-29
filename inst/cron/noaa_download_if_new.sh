@@ -31,69 +31,76 @@ shift
 
 case "$site" in
     bluerock)
-	label="Blue Rock, Vallejo, CA"
+        label="Blue Rock, Vallejo, CA"
         lat=38.1384
         lon=-122.1956
-	zcode=CAZ018
-	## https://forecast.weather.gov/meteograms/Plotter.php?lat=38.1384&lon=-122.1956&wfo=MTR&zcode=CAZ018&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-	;;
+        zcode=CAZ018
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=38.1384&lon=-122.1956&wfo=MTR&zcode=CAZ018&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
     channing-east)
-	label="Channing East, Benicia, CA"
+        label="Channing East, Benicia, CA"
         lat=38.101500
         lon=-122.181000
-	zcode=CAZ018
-	;;
+        zcode=CAZ018
+        ;;
     dumps)
-	label="The Dumps, Pacifica, CA"
+        label="The Dumps, Pacifica, CA"
         lat=37.6722
         lon=-122.4939
-	zcode=CAZ509
-	## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.6722&lon=-122.4939&wfo=MTR&zcode=CAZ509&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-	;;
+        zcode=CAZ509
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.6722&lon=-122.4939&wfo=MTR&zcode=CAZ509&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
     edlevin-600)
-	label="Ed Levin (600 ft), Milpitas, CA"
+        label="Ed Levin (600 ft), Milpitas, CA"
         lat=37.4613
         lon=-121.8600
-	zcode=CAZ511
-	## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4613&lon=-121.86&wfo=MTR&zcode=CAZ511&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-	;;
+        zcode=CAZ511
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4613&lon=-121.86&wfo=MTR&zcode=CAZ511&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
     edlevin-1750)
-	label="Ed Levin (1750 ft), Milpitas, CA"
+        label="Ed Levin (1750 ft), Milpitas, CA"
         lat=37.4754
         lon=-121.8613
-	zcode=CAZ511
-	## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4754&lon=-121.8613&wfo=MTR&zcode=CAZ511&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-	;;
+        zcode=CAZ511
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4754&lon=-121.8613&wfo=MTR&zcode=CAZ511&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
+    hatcreek)
+        label="Hat Creek (4500 ft), CA"
+        lat=40.843055
+        lon=-121.4274685
+        zcode=CAZ014
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=40.8431&lon=-121.4275&wfo=STO&zcode=CAZ014&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
     lakecourt)
-	label="Lake Court Dune, Marina, CA"
+        label="Lake Court Dune, Marina, CA"
         lat=36.6835
         lon=-121.8114
-	zcode=CAZ530
-	## https://forecast.weather.gov/meteograms/Plotter.php?lat=36.6835&lon=-121.8114&wfo=MTR&zcode=CAZ530&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-	;;
+        zcode=CAZ530
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=36.6835&lon=-121.8114&wfo=MTR&zcode=CAZ530&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
     mission)
-	label="Mission Ridge (1900 ft), Freemont, CA"
+        label="Mission Ridge (1900 ft), Freemont, CA"
         lat=37.517534
         lon=-121.89175
-	zcode=CAZ509
-	## view-source:https://forecast.weather.gov/meteograms/Plotter.php?lat=37.6722&lon=-122.4939&wfo=MTR&zcode=CAZ509&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-	;;
+        zcode=CAZ509
+        ## view-source:https://forecast.weather.gov/meteograms/Plotter.php?lat=37.6722&lon=-122.4939&wfo=MTR&zcode=CAZ509&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
     mttam-b)
-	label="Mt Tam, (Launch B), Stinson Beach, CA"
+        label="Mt Tam, (Launch B), Stinson Beach, CA"
         lat=37.9112
         lon=-122.6244
-	zcode=CAZ507
-	## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.9112&lon=-122.6244&wfo=MTR&zcode=CAZ507&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-	;;
+        zcode=CAZ507
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.9112&lon=-122.6244&wfo=MTR&zcode=CAZ507&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
     slide)
-	label="Slide Mountain, NV"
+        label="Slide Mountain, NV"
         lat=39.3199
         lon=-119.8674
-	zcode=NVZ002
+        zcode=NVZ002
         ## https://forecast.weather.gov/meteograms/Plotter.php?lat=39.3199&lon=-119.8674&wfo=REV&zcode=NVZ002&gset=18&gdiff=8&unit=0&tinfo=PY8&ahour=0&pcmd=11011111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-	;;
+        ;;
     *)
-	error "Unknown site: $site"
+        error "Unknown site: $site"
 esac
 
 debug "Current time: $(date --rfc-3339=seconds)"
