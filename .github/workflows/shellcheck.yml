@@ -1,6 +1,6 @@
 on: [push, pull_request]
 
-name: checks
+name: ShellCheck
 
 jobs:
   checks:
@@ -8,7 +8,7 @@ jobs:
     
     runs-on: ubuntu-20.04
     
-    name: checks
+    name: ShellCheck
 
     strategy:
       fail-fast: false
