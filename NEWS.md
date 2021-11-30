@@ -1,6 +1,11 @@
 bhgc.wx
 =======
 
+Version: 0.3.0-9000 [2021-06-28]
+
+ * Add more sites.
+ 
+
 Version: 0.3.0 [2020-02-29]
 
 SIGNIFICANT CHANGES:

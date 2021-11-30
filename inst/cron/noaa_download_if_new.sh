@@ -30,50 +30,98 @@ site=${1}
 shift
 
 case "$site" in
+    blackcap)
+        label="Black Cap (6250 ft), OR"
+        lat=36.818344
+        lon=-118.0429785
+        zcode=ORZ031
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=42.2043&lon=-120.3301&wfo=MFR&zcode=ORZ031&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
     bluerock)
-	label="Blue Rock, Vallejo, CA"
+        label="Blue Rock, Vallejo (550 ft), CA"
         lat=38.1384
         lon=-122.1956
-	zcode=CAZ018
-	## https://forecast.weather.gov/meteograms/Plotter.php?lat=38.1384&lon=-122.1956&wfo=MTR&zcode=CAZ018&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-	;;
+        zcode=CAZ018
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=38.1384&lon=-122.1956&wfo=MTR&zcode=CAZ018&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
+    channing-east)
+        label="Channing East, Benicia (660 ft), CA"
+        lat=38.101500
+        lon=-122.181000
+        zcode=CAZ018
+        ;;
     dumps)
-	label="The Dumps, Pacifica, CA"
+        label="The Dumps, Pacifica (100 ft), CA"
         lat=37.6722
         lon=-122.4939
-	zcode=CAZ509
-	## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.6722&lon=-122.4939&wfo=MTR&zcode=CAZ509&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-	;;
+        zcode=CAZ509
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.6722&lon=-122.4939&wfo=MTR&zcode=CAZ509&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
     edlevin-600)
-	label="Ed Levin (600 ft), Milpitas, CA"
+        label="Ed Levin (600 ft), Milpitas, CA"
         lat=37.4613
         lon=-121.8600
-	zcode=CAZ511
-	## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4613&lon=-121.86&wfo=MTR&zcode=CAZ511&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-	;;
+        zcode=CAZ511
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4613&lon=-121.86&wfo=MTR&zcode=CAZ511&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
     edlevin-1750)
-	label="Ed Levin (1750 ft), Milpitas, CA"
+        label="Ed Levin (1750 ft), Milpitas, CA"
         lat=37.4754
         lon=-121.8613
-	zcode=CAZ511
-	## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4754&lon=-121.8613&wfo=MTR&zcode=CAZ511&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-	;;
+        zcode=CAZ511
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4754&lon=-121.8613&wfo=MTR&zcode=CAZ511&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
+    hatcreek)
+        label="Hat Creek (4500 ft), CA"
+        lat=40.843055
+        lon=-121.4274685
+        zcode=CAZ014
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=40.8431&lon=-121.4275&wfo=STO&zcode=CAZ014&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
     lakecourt)
-	label="Lake Court Dune, Marina, CA"
+        label="Lake Court Dune, Marina, CA"
         lat=36.6835
         lon=-121.8114
-	zcode=CAZ530
-	## https://forecast.weather.gov/meteograms/Plotter.php?lat=36.6835&lon=-121.8114&wfo=MTR&zcode=CAZ530&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-	;;
+        zcode=CAZ530
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=36.6835&lon=-121.8114&wfo=MTR&zcode=CAZ530&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
+    mission)
+        label="Mission Ridge (1900 ft), Freemont, CA"
+        lat=37.517534
+        lon=-121.89175
+        zcode=CAZ509
+        ## view-source:https://forecast.weather.gov/meteograms/Plotter.php?lat=37.6722&lon=-122.4939&wfo=MTR&zcode=CAZ509&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
     mttam-b)
-	label="Mt Tam, (Launch B), Stinson Beach, CA"
+        label="Mt Tam, (Launch B; 1950 ft), Stinson Beach, CA"
         lat=37.9112
         lon=-122.6244
-	zcode=CAZ507
-	## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.9112&lon=-122.6244&wfo=MTR&zcode=CAZ507&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-	;;
+        zcode=CAZ507
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.9112&lon=-122.6244&wfo=MTR&zcode=CAZ507&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
+    slide)
+        label="Slide Mountain (8200 ft), NV"
+        lat=39.3199
+        lon=-119.8674
+        zcode=NVZ002
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=39.3199&lon=-119.8674&wfo=REV&zcode=NVZ002&gset=18&gdiff=8&unit=0&tinfo=PY8&ahour=0&pcmd=11011111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
+    sugarhill)
+        label="Sugar Hill (7200 ft), CA"
+        lat=41.806521
+        lon=-120.328989
+        zcode=CAZ085
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=41.8065&lon=-120.329&wfo=MFR&zcode=CAZ085&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
+    sweetandlow)
+        label="Sweet and Low (5650 ft), CA"
+        lat=41.828500
+        lon=-120.346483
+        zcode=CAZ085
+        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=41.8285&lon=-120.3465&wfo=MFR&zcode=CAZ085&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+        ;;
     *)
-	error "Unknown site: $site"
+        error "Unknown site: $site"
 esac
 
 debug "Current time: $(date --rfc-3339=seconds)"
@@ -122,9 +170,10 @@ url="https://forecast.weather.gov/meteograms/Plotter.php?lat=${lat}&lon=${lon}&w
 debug "PNG URL: ${url}"
 png="${path}/${site},${timestamp},${wfo}.png"
 ## Already downloaded?
-if ! $force && $skip && [[ -f "${png}" ]]; then
-    debug "Skipping. Already downloaded: ${png}"
+if ! $force && [[ -f "${png}" ]]; then
+    debug "Skipping because already downloaded: ${png}"
 else
+    debug "Downloading PNG file"
     curl --silent -o "${png}" "${url}"
 fi
 debug "PNG file: $(ls -l "${png}")"
@@ -140,7 +189,7 @@ debug "XML file: $(ls -l "${xml}")"
 if [[ $# -gt 0 ]]; then
     debug "Composing email:"
     debug "Additional options to 'mail': $*"
-    subject="NOAA Forecast for ${label}"
+    subject="NOAA: ${label}"
     debug "subject=${subject}"
     date=$(echo "${timestamp}" | sed -E 's/(.*)T(.*)([-+].*)/\1/g')
     time=$(echo "${timestamp}" | sed -E 's/(.*)T(.*)([-+].*)/\2/g')
@@ -154,7 +203,9 @@ if [[ $# -gt 0 ]]; then
     body="${body}${NL}* ${url}${NL}"    
     url="https://forecast.weather.gov/MapClick.php?w0=t&w1=td&w2=wc&w3=sfcwind&w4=sky&w5=pop&w6=rh&w7=thunder&w8=rain&Submit=Submit&&site=mtr&bw=0&textField1=${lat}&textField2=${lon}&AheadHour=0&FcstType=digital"
     body="${body}${NL}* ${url}${NL}"
-    body="${body}${NL}${NL}This message was sent on $(date --rfc-3339=seconds)${NL}"
+    url="https://forecast.weather.gov/product.php?site=${wfo^^}&issuedby=${wfo^^}&product=AFD&format=TXT&glossary=1"
+    body="${body}${NL}* ${url}${NL}"
+#    body="${body}${NL}${NL}This message was sent on $(date --rfc-3339=seconds)${NL}"
     debug "body=${NL}${body}"
     
     debug "Email command: printf \"%s\" \"\${body}\" | mail -a \"\${png}\" -s \"\${subject}\" $*"
@@ -164,5 +215,10 @@ if [[ $# -gt 0 ]]; then
         # shellcheck disable=SC2086,SC2048
         printf "%s" "${body}" | mail -a "${png}" -s "${subject}" $*
         debug "Email result: $?"
+    fi
+
+    if [[ -n "${R_BHGC_NOAA_EMAIL_CREDENTIALS}" ]]; then
+        debug "HTML email:"
+        Rscript -e bhgc.wx::send_email --args --label="${label}" --lon="${lon}" --lat="${lat}" --wfo="${wfo}" --timestamp="${timestamp}" --imgfile="${png}" --from="${BHGC_NOAA_FROM}" --to="${BHGC_NOAA_TO}" --bcc="${BHGC_NOAA_BCC}"
     fi
 fi
