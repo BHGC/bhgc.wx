@@ -58,3 +58,4 @@ Rplots.pdf$
 ^rsconnect
 ^locations.R$
 ^raw_data/
+^.local/
