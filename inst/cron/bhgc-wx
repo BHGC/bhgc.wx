@@ -34,10 +34,6 @@
 ###  bhgc-wx view --site=marshall --lat=34.21 --lon=-117.3029 --zcode=CAZ055
 ###
 ### Environment variables:
-###  R_BHGC_NOAA_EMAIL_CREDENTIALS
-###  BHGC_NOAA_FROM
-###  BHGC_NOAA_TO
-###  BHGC_NOAA_BCC
 ###  BHGC_NOAA_CONDITIONS
 ###
 ### Requirements:
@@ -384,9 +380,9 @@ lon=
 wfo=
 zcode=
 extras=
-email_from=${BHGC_NOAA_FROM}
-email_to=${BHGC_NOAA_TO}
-email_bcc=${BHGC_NOAA_BCC}
+email_from=
+email_to=
+email_bcc=
 
 # Parse command-line options
 while [[ $# -gt 0 ]]; do
