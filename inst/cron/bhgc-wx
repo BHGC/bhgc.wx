@@ -473,6 +473,17 @@ elif [[ $action == "version" ]]; then
     _exit 0
 fi
 
+
+# -------------------------------------------------------------------------
+# Validate options
+# -------------------------------------------------------------------------
+if [[ -n "${email_bcc}" ]]; then
+    [[ -n "${email_to}" ]] || error "Email 'bcc' address (--email-bcc='${email_bcc}' is specified without specifying the 'to' address (--email-to=<address>)"
+fi
+if [[ -n "${email_to}" ]]; then
+    [[ -n "${email_from}" ]] || error "Email 'to' address (--email-to='${email_to}' is specified without specifying the 'from' address (--email-from=<address>)"
+fi
+
 if [[ $action == "parse" ]]; then
     url="${extras}"
     [[ -n "${url}" ]] || error "Cannot parse. No URL specified"
@@ -702,14 +713,18 @@ else
 fi
 mdebug "XML file: $(ls -l "${xml}")"
 
+
 ## Email?
-if [[ $# -gt 0 ]]; then
+if [[ -n "${email_to}" ]]; then
     if [[ -z "${label}" ]]; then
         mwarn "Site label ('--label=<string>') not specified; will use site name instead: '${site}'"
         label=${site}
     fi        
-    
+
     mdebug "Composing email:"
+    mdebug " - From: ${email_from}"
+    mdebug " - To: ${email_to}"
+    mdebug " - Optional bcc: ${email_bcc}"
     mdebug "Additional options to 'mail': ${extras}"
     subject="NOAA: ${label}"
     mdebug "subject=${subject}"
@@ -730,12 +745,12 @@ if [[ $# -gt 0 ]]; then
 #    body="${body}${NL}${NL}This message was sent on $(date --rfc-3339=seconds)${NL}"
     mdebug "body=${NL}${body}"
     
-    mdebug "Email command: printf \"%s\" \"\${body}\" | mail -a \"\${png}\" -s \"\${subject}\" $extras"
+    mdebug "Email command: printf \"%s\" \"\${body}\" | mail -a \"\${png}\" -s \"\${subject}\" -r \"${email_from}\" \"${email_bcc}\" \"${email_to}\""
     if $dryrun; then
         mdebug "Email result: N/A (dryrun=true)"
     else
         # shellcheck disable=SC2086,SC2048
-        printf "%s" "${body}" | mail -a "${png}" -s "${subject}" $extras
+        printf "%s" "${body}" | mail -a "${png}" -s "${subject}" -r "${email_from}" "${email_bcc}" "${email_to}"
         mdebug "Email result: $?"
     fi
 
