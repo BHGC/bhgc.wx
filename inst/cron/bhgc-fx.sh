@@ -5,7 +5,8 @@
 ###  bhgc-fx <command> [option]*
 ### 
 ### Commands:
-###  check   Check for FX update for one site
+###  check   Check for FX update for a site
+###  view    View most recent FX for a site 
 ###  sites   List known sites
 ###
 ### Sites:
@@ -343,11 +344,16 @@ list_sites() {
     grep -E "^[[:space:]]+[a-z0-9-]+[)][[:space:]]*$" "$0" | sed -E 's/[[:space:])]//g'
 }
 
-function table_of_sites {
+table_of_sites() {
     local site
     for site in $(list_sites); do
         printf " %-8s\\n" "$site"
     done
+}
+
+view_image() {
+    assert_file_exists "$1"
+    xdg-open "$1"
 }
 
 
@@ -373,6 +379,8 @@ while [[ $# -gt 0 ]]; do
     if [[ "$1" == "check" ]]; then
         action="$1"
     elif [[ "$1" == "sites" ]]; then
+        action="$1"
+    elif [[ "$1" == "view" ]]; then
         action="$1"
 
     ## Options (--flags):
@@ -443,10 +451,8 @@ if [[ $action == "sites" ]]; then
     _exit 0
 fi
 
-[[ $action == "check" ]] || error "INTERNAL ERROR: action=${action}"
 
 [[ -z "${site}" ]] && error "No site specified"
-
 
 case "$site" in
     blackcap)
@@ -556,6 +562,17 @@ make_dir "$root"
 path="${root}/${site}"
 make_dir "$path"
 mdebug "path=${path}"
+
+if [[ $action == "view" ]]; then
+    mapfile -t files < <(find "${path}" -type f -name "*.png" -printf "\n%AY-%Am-%AdT%AH%AM%AS %p" | sort --reverse --key=1)
+    [[ ${#files} -eq 0 ]] && error "There are no downloaded forecasts for site '${site}': ${path}"
+    file=$(echo "${files[0]}" | cut -d ' ' -f 2)
+    mdebug "More recent file: ${file}"
+    view_image "$file"
+    _exit 0
+fi
+
+[[ $action == "check" ]] || error "INTERNAL ERROR: action=${action}"
 
 url="https://forecast.weather.gov/MapClick.php?lat=${lat}&lon=${lon}&FcstType=digitalDWML"
 mdebug "XML URL: ${url}"
