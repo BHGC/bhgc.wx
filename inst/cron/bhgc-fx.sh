@@ -1,13 +1,13 @@
 #! /usr/bin/env bash
-### fx check
+### bhgc-fx
 ### 
 ### Usage:
 ###  bhgc-fx <command> [option]*
 ### 
 ### Commands:
-###  check   Check for FX update for a site
-###  view    View most recent FX for a site 
-###  sites   List known sites
+###  download  Download FX for a site
+###  view      View most recent FX for a site 
+###  sites     List known sites
 ###
 ### Sites:
 ### {{table_of_sites}}
@@ -26,7 +26,8 @@
 ###  bhgc-fx --help
 ###  bhgc-fx --version
 ###  bhgc-fx sites
-###  bhgc-fx check --site=mttam-b
+###  bhgc-fx download --site=mttam-b
+###  bhgc-fx view --site=mttam-b
 ###
 ### Environment variables:
 ###  R_BHGC_NOAA_EMAIL_CREDENTIALS
@@ -341,7 +342,7 @@ help() {
 # -------------------------------------------------------------------------
 list_sites() {
     assert_file_exists "$0"
-    grep -E "^[[:space:]]+[a-z0-9-]+[)][[:space:]]*$" "$0" | sed -E 's/[[:space:])]//g'
+    grep -E "^[[:space:]]+[a-z0-9-]+[)][[:space:]]*$" "$0" | sed -E 's/[[:space:])]//g' | sort
 }
 
 table_of_sites() {
@@ -376,7 +377,7 @@ email_bcc=${BHGC_NOAA_BCC}
 while [[ $# -gt 0 ]]; do
     mdebug "Next CLI argument: $1"
     ## Commands:
-    if [[ "$1" == "check" ]]; then
+    if [[ "$1" == "download" ]]; then
         action="$1"
     elif [[ "$1" == "sites" ]]; then
         action="$1"
@@ -572,7 +573,7 @@ if [[ $action == "view" ]]; then
     _exit 0
 fi
 
-[[ $action == "check" ]] || error "INTERNAL ERROR: action=${action}"
+[[ $action == "download" ]] || error "INTERNAL ERROR: action=${action}"
 
 url="https://forecast.weather.gov/MapClick.php?lat=${lat}&lon=${lon}&FcstType=digitalDWML"
 mdebug "XML URL: ${url}"
