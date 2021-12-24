@@ -604,7 +604,7 @@ if [[ $action == "view" ]]; then
     minfo "zcode: ${zcode}"
     minfo "path: ${path}"
     minfo "NOAA 'now' URL: ${noaa_now_url}"
-    minfo "NOAA PNG URL: ${noaa_png_url}"
+    minfo "NOAA XML URL: ${noaa_xml_url}"
     
     mapfile -t files < <(find "${path}" -type f -name "*.xml" -printf "\n%AY-%Am-%AdT%AH%AM%AS %p" | sort --reverse --key=1)
     [[ ${#files} -eq 0 ]] && error "There are no downloaded forecasts for site '${site}': ${path}"
@@ -618,6 +618,7 @@ if [[ $action == "view" ]]; then
         [[ -n "${wfo}" ]] || mwarn "Failed to infer WFO from XML file '${xml_file}'"
         noaa_png_url="https://forecast.weather.gov/meteograms/Plotter.php?lat=${lat}&lon=${lon}&wfo=${wfo}&zcode=${zcode}&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111110000000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=&bw=0&hrspan=48&pqpfhr=6&psnwhr=6"
         mdebug "NOAA PNG URL: ${noaa_png_url}"
+        minfo "NOAA PNG URL: ${noaa_png_url}"
     fi
 
     png_file=${xml_file/.xml/.png}
@@ -637,7 +638,7 @@ mdebug "timestamp=${timestamp}"
 
 wfo=$(xml_get_wfo "${tf}")
 mdebug "wfo=${wfo}"
-[[ -z "${wfo}" ]] && error "Failed to infer WFO (weather forecast office) for site '$site'"
+[[ -z "${wfo}" ]] && error "Failed to infer WFO (weather forecast office) for site '${site}'"
 
 xml="${path}/${site},${timestamp},${wfo}.xml"
 mdebug "xml=${xml}"
@@ -654,6 +655,8 @@ png="${path}/${site},${timestamp},${wfo}.png"
 if ! $force && [[ -f "${png}" ]]; then
     mdebug "Skipping because already downloaded: ${png}"
 else
+    noaa_png_url="https://forecast.weather.gov/meteograms/Plotter.php?lat=${lat}&lon=${lon}&wfo=${wfo}&zcode=${zcode}&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111110000000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=&bw=0&hrspan=48&pqpfhr=6&psnwhr=6"
+    mdebug "NOAA PNG URL: ${noaa_png_url}"
     mdebug "Downloading PNG file"
     curl --silent -o "${png}" "${noaa_png_url}"
 fi
