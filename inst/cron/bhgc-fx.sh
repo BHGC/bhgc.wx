@@ -564,7 +564,20 @@ path="${root}/${site}"
 make_dir "$path"
 mdebug "path=${path}"
 
+noaa_xml_url="https://forecast.weather.gov/MapClick.php?lat=${lat}&lon=${lon}&FcstType=digitalDWML"
+mdebug "NOAA XML URL: ${noaa_xml_url}"
+noaa_png_url="https://forecast.weather.gov/meteograms/Plotter.php?lat=${lat}&lon=${lon}&wfo=${wfo}&zcode=${zcode}&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111110000000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=&bw=0&hrspan=48&pqpfhr=6&psnwhr=6"
+mdebug "NOAA PNG URL: ${noaa_png_url}"
+
 if [[ $action == "view" ]]; then
+    minfo "site=${site}"
+    minfo "label=${label}"
+    minfo "lat=${lat}"
+    minfo "lon=${lon}"
+    minfo "zcode=${zcode}"
+    minfo "NOAA PNG URL=${noaa_png_url}"
+    minfo "NOAA XML URL=${noaa_xml_url}"
+    
     mapfile -t files < <(find "${path}" -type f -name "*.png" -printf "\n%AY-%Am-%AdT%AH%AM%AS %p" | sort --reverse --key=1)
     [[ ${#files} -eq 0 ]] && error "There are no downloaded forecasts for site '${site}': ${path}"
     file=$(echo "${files[0]}" | cut -d ' ' -f 2)
@@ -575,11 +588,8 @@ fi
 
 [[ $action == "download" ]] || error "INTERNAL ERROR: action=${action}"
 
-url="https://forecast.weather.gov/MapClick.php?lat=${lat}&lon=${lon}&FcstType=digitalDWML"
-mdebug "XML URL: ${url}"
-
 tf=$(mktemp)
-curl --silent -o "${tf}" "${url}"
+curl --silent -o "${tf}" "${noaa_xml_url}"
 
 timestamp=$(grep creation-date "${tf}" | sed -E 's/[ ]*<creation-date[^>]*>([^<]+)<.*/\1/g')
 [[ -z "${timestamp}" ]] && error "Failed to retrieve forecast for site=$site"
@@ -599,15 +609,13 @@ if ! $force && $skip && [[ -f "${xml}" ]]; then
     exit 0
 fi
 
-url="https://forecast.weather.gov/meteograms/Plotter.php?lat=${lat}&lon=${lon}&wfo=${wfo}&zcode=${zcode}&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111110000000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=&bw=0&hrspan=48&pqpfhr=6&psnwhr=6"
-mdebug "PNG URL: ${url}"
 png="${path}/${site},${timestamp},${wfo}.png"
 ## Already downloaded?
 if ! $force && [[ -f "${png}" ]]; then
     mdebug "Skipping because already downloaded: ${png}"
 else
     mdebug "Downloading PNG file"
-    curl --silent -o "${png}" "${url}"
+    curl --silent -o "${png}" "${noaa_png_url}"
 fi
 mdebug "PNG file: $(ls -l "${png}")"
 
