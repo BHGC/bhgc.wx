@@ -649,12 +649,14 @@ curl --silent -o "${tf}" "${noaa_xml_url}"
 timestamp=$(grep creation-date "${tf}" | sed -E 's/[ ]*<creation-date[^>]*>([^<]+)<.*/\1/g')
 [[ -z "${timestamp}" ]] && error "Failed to retrieve forecast for site '${site}'"
 mdebug "timestamp=${timestamp}"
+file_timestamp=$(echo "${timestamp}" | sed 's/://g')
+mdebug "File timestamp=${file_timestamp}"
 
 wfo=$(xml_get_wfo "${tf}")
 mdebug "wfo=${wfo}"
 [[ -z "${wfo}" ]] && error "Failed to infer WFO (weather forecast office) for site '${site}'"
 
-xml="${path}/${site},${timestamp},${wfo}.xml"
+xml="${path}/${site},${file_timestamp},${wfo}.xml"
 mdebug "xml=${xml}"
 
 ## Already downloaded?
@@ -664,7 +666,7 @@ if ! $force && $skip && [[ -f "${xml}" ]]; then
     exit 0
 fi
 
-png="${path}/${site},${timestamp},${wfo}.png"
+png="${path}/${site},${file_timestamp},${wfo}.png"
 ## Already downloaded?
 if ! $force && [[ -f "${png}" ]]; then
     mdebug "Skipping because already downloaded: ${png}"
