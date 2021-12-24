@@ -15,6 +15,7 @@
 ###  --help
 ###  --version
 ###  --debug
+###  --force
 ###  --site=<site>
 ###  --email_from=<email address>  
 ###  --email_to=<email address>    
@@ -27,10 +28,15 @@
 ###  bhgc-fx check --site=mttam-b
 ###
 ### Environment variables:
+###  R_BHGC_NOAA_EMAIL_CREDENTIALS
 ###  BHGC_NOAA_FROM
 ###  BHGC_NOAA_TO
 ###  BHGC_NOAA_BCC
 ###  BHGC_NOAA_CONDITIONS
+###
+### Requirements:
+###  * curl
+###  * mail
 ###
 ### Version: 0.1.0-9000
 ### Copyright: Henrik Bengtsson (2019-2021)
@@ -378,6 +384,10 @@ while [[ $# -gt 0 ]]; do
         debug=true
     elif [[ "$1" == "--dryrun" ]]; then
         dryrun=true
+    elif [[ "$1" == "--force" ]]; then
+        force=true
+    elif [[ "$1" == "--skip" ]]; then
+        skip=true
     elif [[ "$1" == "--verbose" ]]; then
         verbose=1
     
@@ -398,6 +408,8 @@ while [[ $# -gt 0 ]]; do
             email_to=$value
         elif [[ "$key" == "email-bcc" ]]; then
             email_bcc=$value
+        elif [[ "$key" == "skip" ]]; then
+            skip=$value
         fi
     else
         extras="extras $1"
@@ -407,6 +419,11 @@ done
 
 
 mdebug "action: '${action}'"
+mdebug "debug: ${debug}"
+mdebug "dryrun: ${dryrun}"
+mdebug "force: ${force}"
+mdebug "skip: ${skip}"
+mdebug "extras: '${extras}'"
 
 ## --help should always be available prior to any validation errors
 if [[ -z $action ]]; then
@@ -532,10 +549,6 @@ mdebug "label=${label}"
 mdebug "lat=${lat}"
 mdebug "lon=${lon}"
 mdebug "zcode=${zcode}"
-mdebug "to=$*"
-mdebug "dryrun=${dryrun}"
-mdebug "force=${force}"
-mdebug "skip=${skip}"
 
 root=$HOME/.cache/bhgc/sites
 make_dir "$root"
@@ -590,7 +603,7 @@ mdebug "XML file: $(ls -l "${xml}")"
 ## Email?
 if [[ $# -gt 0 ]]; then
     mdebug "Composing email:"
-    mdebug "Additional options to 'mail': $*"
+    mdebug "Additional options to 'mail': ${extras}"
     subject="NOAA: ${label}"
     mdebug "subject=${subject}"
     date=$(echo "${timestamp}" | sed -E 's/(.*)T(.*)([-+].*)/\1/g')
@@ -610,12 +623,12 @@ if [[ $# -gt 0 ]]; then
 #    body="${body}${NL}${NL}This message was sent on $(date --rfc-3339=seconds)${NL}"
     mdebug "body=${NL}${body}"
     
-    mdebug "Email command: printf \"%s\" \"\${body}\" | mail -a \"\${png}\" -s \"\${subject}\" $*"
+    mdebug "Email command: printf \"%s\" \"\${body}\" | mail -a \"\${png}\" -s \"\${subject}\" $extras"
     if $dryrun; then
         mdebug "Email result: N/A (dryrun=true)"
     else
         # shellcheck disable=SC2086,SC2048
-        printf "%s" "${body}" | mail -a "${png}" -s "${subject}" $*
+        printf "%s" "${body}" | mail -a "${png}" -s "${subject}" $extras
         mdebug "Email result: $?"
     fi
 
