@@ -8,6 +8,7 @@
 ###  download  Download FX for a site
 ###  view      View most recent FX for a site 
 ###  sites     List known sites
+###  parse     Parse a NOAA 'Plotter' URL
 ###
 ### Sites:
 ### {{table_of_sites}}
@@ -28,6 +29,7 @@
 ###  bhgc-wx sites
 ###  bhgc-wx download --site=mttam-b
 ###  bhgc-wx view --site=mttam-b
+###  bhgc-wx parse 'https://forecast.weather.gov/meteograms/Plotter.php?lat=...'
 ###  bhgc-wx download --site=marshall --lat=34.21 --lon=-117.3029 --zcode=CAZ055
 ###  bhgc-wx view --site=marshall --lat=34.21 --lon=-117.3029 --zcode=CAZ055
 ###
@@ -392,6 +394,8 @@ while [[ $# -gt 0 ]]; do
     ## Commands:
     if [[ "$1" == "download" ]]; then
         action="$1"
+    elif [[ "$1" == "parse" ]]; then
+        action="$1"
     elif [[ "$1" == "sites" ]]; then
         action="$1"
     elif [[ "$1" == "view" ]]; then
@@ -444,11 +448,11 @@ while [[ $# -gt 0 ]]; do
             skip=$value
         fi
     else
-        extras="extras $1"
+        extras="${extras} $1"
     fi
     shift
 done
-
+extras=$(echo "${extras}" | xargs)
 
 mdebug "action: '${action}'"
 mdebug "debug: ${debug}"
@@ -469,11 +473,34 @@ elif [[ $action == "version" ]]; then
     _exit 0
 fi
 
-
-if [[ $action == "sites" ]]; then
+if [[ $action == "parse" ]]; then
+    url="${extras}"
+    [[ -n "${url}" ]] || error "Cannot parse. No URL specified"
+    mdebug "URL: ${url}"
+    pattern='https://forecast.weather.gov/meteograms/Plotter.php?'
+    mdebug "pattern: '${pattern}'"
+    echo "${url}" | grep -q -F "${pattern}" || error "URL does not match pattern (${pattern}): ${url}"
+    data=${url/${pattern}/}
+    mdebug "Data: ${data}"
+    data=$(echo "${data}" | tr '&' $'\n')
+    lat=$(echo "${data}" | grep -E "^lat=" | sed -E 's/^.*=//')
+    lon=$(echo "${data}" | grep -E "^lon=" | sed -E 's/^.*=//')
+    zcode=$(echo "${data}" | grep -E "^zcode=" | sed -E 's/^.*=//')
+    wfo=$(echo "${data}" | grep -E "^wfo=" | sed -E 's/^.*=//')
+    echo "lat: ${lat}"
+    echo "lon: ${lon}"
+    echo "zcode: ${zcode}"
+    echo "wfo: ${wfo}"
+    [[ -n "${lat}"   ]] || error "Failed to infer 'lat'"
+    [[ -n "${lon}"   ]] || error "Failed to infer 'lon'"
+    [[ -n "${zcode}" ]] || error "Failed to infer 'zcode'"
+    [[ -n "${wfo}"   ]] || warn  "Failed to infer 'wfo'"
+    _exit 0
+elif [[ $action == "sites" ]]; then
     list_sites
     _exit 0
 fi
+
 
 
 [[ -n "$site" ]] || error "Site name ('site') is not specified"
@@ -546,7 +573,6 @@ if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
           lat=37.517534
           lon=-121.89175
           zcode=CAZ509
-          ## view-source:https://forecast.weather.gov/meteograms/Plotter.php?lat=37.6722&lon=-122.4939&wfo=MTR&zcode=CAZ509&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
           ;;
       mttam-b)
           label="Mt Tam, (Launch B; 1950 ft), Stinson Beach, CA"
