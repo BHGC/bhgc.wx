@@ -488,6 +488,12 @@ fi
 
 if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
   case "$site" in
+      batesbluff)
+          label="Bates Bluff (150 ft), Carpinteria, CA"
+          lat=34.3817
+          lon=-119.4844
+          zcode=CAZ039
+          ;;
       blackcap)
           label="Black Cap (6250 ft), OR"
           lat=36.818344
@@ -529,6 +535,12 @@ if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
           zcode=CAZ511
           ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4754&lon=-121.8613&wfo=MTR&zcode=CAZ511&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
           ;;
+      ej)
+          label="Upper EJ (3800 ft), Santa Barbara, CA"
+          lat=34.4944
+          lon=-119.703
+          zcode=CAZ052
+          ;;
       hatcreek)
           label="Hat Creek (4500 ft), CA"
           lat=40.843055
@@ -555,12 +567,24 @@ if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
           lon=-121.89175
           zcode=CAZ509
           ;;
+      moremesa)
+          label="More Mesa (110 ft), Santa Barbara, CA"
+          lat=34.4179
+          lon=-119.7898
+          zcode=CAZ039
+          ;;
       mttam-b)
           label="Mt Tam, (Launch B; 1950 ft), Stinson Beach, CA"
           lat=37.9112
           lon=-122.6244
           zcode=CAZ507
           ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.9112&lon=-122.6244&wfo=MTR&zcode=CAZ507&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+          ;;
+      skyport)
+          label="Skyport (3800 ft), Santa Barbara, CA"
+          lat=34.4809
+          lon=-119.6848
+          zcode=CAZ052
           ;;
       slide)
           label="Slide Mountain (8200 ft), NV"
@@ -655,6 +679,7 @@ curl --silent -o "${tf}" "${noaa_xml_url}"
 timestamp=$(grep creation-date "${tf}" | sed -E 's/[ ]*<creation-date[^>]*>([^<]+)<.*/\1/g')
 [[ -z "${timestamp}" ]] && error "Failed to retrieve forecast for site '${site}'"
 mdebug "timestamp=${timestamp}"
+# shellcheck disable=SC2001
 file_timestamp=$(echo "${timestamp}" | sed 's/://g')
 mdebug "File timestamp=${file_timestamp}"
 
