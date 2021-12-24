@@ -544,7 +544,7 @@ if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
           ## https://forecast.weather.gov/meteograms/Plotter.php?lat=36.6835&lon=-121.8114&wfo=MTR&zcode=CAZ530&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
           ;;
       marshall)
-          label="Marshall Peak (4200 ft)"
+          label="Marshall Peak (4200 ft), San Bernadino, CA"
           lat=34.21
           lon=-117.3029
           zcode=CAZ055
@@ -584,7 +584,7 @@ if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
           ## https://forecast.weather.gov/meteograms/Plotter.php?lat=41.8285&lon=-120.3465&wfo=MFR&zcode=CAZ085&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
           ;;
       torreypines)
-          label="Torrey Pines Gliderport (100 ft), CA"
+          label="Torrey Pines Gliderport (100 ft), La Jolla, San Diego, CA"
           lat=32.8901
           lon=-117.251
           zcode=CAZ043
