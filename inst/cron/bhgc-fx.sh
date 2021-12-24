@@ -357,6 +357,12 @@ view_image() {
     xdg-open "$1"
 }
 
+xml_get_wfo() {
+    assert_file_exists "$1"
+    res=$(basename "$(grep credit "$1" | sed -E 's/[ ]*<credit[^>]*>([^<]+)<.*/\1/g')")
+    [[ -n "${res}" ]] || mwarn "Failed to infer WFO (weather forecast office) from XML file '$1'"
+    echo "${res}"
+}
 
 # -------------------------------------------------------------------------
 # Main
@@ -368,6 +374,11 @@ force=${BHGC_NOAA_FORCE:-false}
 skip=${BHGC_NOAA_SKIP:-true}
 action=
 site=
+label=
+lat=
+lon=
+wfo=
+zcode=
 extras=
 email_from=${BHGC_NOAA_FROM}
 email_to=${BHGC_NOAA_TO}
@@ -411,6 +422,16 @@ while [[ $# -gt 0 ]]; do
         fi
         if [[ "$key" == "site" ]]; then
             site=$value
+        elif [[ "$key" == "label" ]]; then
+            label=$value
+        elif [[ "$key" == "lat" ]]; then
+            lat=$value
+        elif [[ "$key" == "lon" ]]; then
+            lon=$value
+        elif [[ "$key" == "wfo" ]]; then
+            wfo=$value
+        elif [[ "$key" == "zcode" ]]; then
+            zcode=$value
         elif [[ "$key" == "email-from" ]]; then
             email_from=$value
         elif [[ "$key" == "email-to" ]]; then
@@ -453,109 +474,116 @@ if [[ $action == "sites" ]]; then
 fi
 
 
-[[ -z "${site}" ]] && error "No site specified"
+[[ -n "$site" ]] || error "Site name ('site') is not specified"
 
-case "$site" in
-    blackcap)
-        label="Black Cap (6250 ft), OR"
-        lat=36.818344
-        lon=-118.0429785
-        zcode=ORZ031
-        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=42.2043&lon=-120.3301&wfo=MFR&zcode=ORZ031&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-        ;;
-    bluerock)
-        label="Blue Rock, Vallejo (550 ft), CA"
-        lat=38.1384
-        lon=-122.1956
-        zcode=CAZ018
-        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=38.1384&lon=-122.1956&wfo=MTR&zcode=CAZ018&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-        ;;
-    channing-east)
-        label="Channing East, Benicia (660 ft), CA"
-        lat=38.101500
-        lon=-122.181000
-        zcode=CAZ018
-        ;;
-    dumps)
-        label="The Dumps, Pacifica (100 ft), CA"
-        lat=37.6722
-        lon=-122.4939
-        zcode=CAZ509
-        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.6722&lon=-122.4939&wfo=MTR&zcode=CAZ509&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-        ;;
-    edlevin-600)
-        label="Ed Levin (600 ft), Milpitas, CA"
-        lat=37.4613
-        lon=-121.8600
-        zcode=CAZ511
-        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4613&lon=-121.86&wfo=MTR&zcode=CAZ511&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-        ;;
-    edlevin-1750)
-        label="Ed Levin (1750 ft), Milpitas, CA"
-        lat=37.4754
-        lon=-121.8613
-        zcode=CAZ511
-        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4754&lon=-121.8613&wfo=MTR&zcode=CAZ511&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-        ;;
-    hatcreek)
-        label="Hat Creek (4500 ft), CA"
-        lat=40.843055
-        lon=-121.4274685
-        zcode=CAZ014
-        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=40.8431&lon=-121.4275&wfo=STO&zcode=CAZ014&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-        ;;
-    lakecourt)
-        label="Lake Court Dune, Marina, CA"
-        lat=36.6835
-        lon=-121.8114
-        zcode=CAZ530
-        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=36.6835&lon=-121.8114&wfo=MTR&zcode=CAZ530&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-        ;;
-    mission)
-        label="Mission Ridge (1900 ft), Freemont, CA"
-        lat=37.517534
-        lon=-121.89175
-        zcode=CAZ509
-        ## view-source:https://forecast.weather.gov/meteograms/Plotter.php?lat=37.6722&lon=-122.4939&wfo=MTR&zcode=CAZ509&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-        ;;
-    mttam-b)
-        label="Mt Tam, (Launch B; 1950 ft), Stinson Beach, CA"
-        lat=37.9112
-        lon=-122.6244
-        zcode=CAZ507
-        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.9112&lon=-122.6244&wfo=MTR&zcode=CAZ507&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-        ;;
-    slide)
-        label="Slide Mountain (8200 ft), NV"
-        lat=39.3199
-        lon=-119.8674
-        zcode=NVZ002
-        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=39.3199&lon=-119.8674&wfo=REV&zcode=NVZ002&gset=18&gdiff=8&unit=0&tinfo=PY8&ahour=0&pcmd=11011111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-        ;;
-    sugarhill)
-        label="Sugar Hill (7200 ft), CA"
-        lat=41.806521
-        lon=-120.328989
-        zcode=CAZ085
-        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=41.8065&lon=-120.329&wfo=MFR&zcode=CAZ085&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-        ;;
-    sweetandlow)
-        label="Sweet and Low (5650 ft), CA"
-        lat=41.828500
-        lon=-120.346483
-        zcode=CAZ085
-        ## https://forecast.weather.gov/meteograms/Plotter.php?lat=41.8285&lon=-120.3465&wfo=MFR&zcode=CAZ085&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
-        ;;
-    *)
-        error "Not one of the known sites ($(list_sites | tr $'\n' ' ' | sed -E 's/ $//g')): $site"
-esac
+if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
+  case "$site" in
+      blackcap)
+          label="Black Cap (6250 ft), OR"
+          lat=36.818344
+          lon=-118.0429785
+          zcode=ORZ031
+          ## https://forecast.weather.gov/meteograms/Plotter.php?lat=42.2043&lon=-120.3301&wfo=MFR&zcode=ORZ031&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+          ;;
+      bluerock)
+          label="Blue Rock, Vallejo (550 ft), CA"
+          lat=38.1384
+          lon=-122.1956
+          zcode=CAZ018
+          ## https://forecast.weather.gov/meteograms/Plotter.php?lat=38.1384&lon=-122.1956&wfo=MTR&zcode=CAZ018&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+          ;;
+      channing-east)
+          label="Channing East, Benicia (660 ft), CA"
+          lat=38.101500
+          lon=-122.181000
+          zcode=CAZ018
+          ;;
+      dumps)
+          label="The Dumps, Pacifica (100 ft), CA"
+          lat=37.6722
+          lon=-122.4939
+          zcode=CAZ509
+          ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.6722&lon=-122.4939&wfo=MTR&zcode=CAZ509&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+          ;;
+      edlevin-600)
+          label="Ed Levin (600 ft), Milpitas, CA"
+          lat=37.4613
+          lon=-121.8600
+          zcode=CAZ511
+          ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4613&lon=-121.86&wfo=MTR&zcode=CAZ511&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+          ;;
+      edlevin-1750)
+          label="Ed Levin (1750 ft), Milpitas, CA"
+          lat=37.4754
+          lon=-121.8613
+          zcode=CAZ511
+          ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.4754&lon=-121.8613&wfo=MTR&zcode=CAZ511&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+          ;;
+      hatcreek)
+          label="Hat Creek (4500 ft), CA"
+          lat=40.843055
+          lon=-121.4274685
+          zcode=CAZ014
+          ## https://forecast.weather.gov/meteograms/Plotter.php?lat=40.8431&lon=-121.4275&wfo=STO&zcode=CAZ014&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+          ;;
+      lakecourt)
+          label="Lake Court Dune, Marina, CA"
+          lat=36.6835
+          lon=-121.8114
+          zcode=CAZ530
+          ## https://forecast.weather.gov/meteograms/Plotter.php?lat=36.6835&lon=-121.8114&wfo=MTR&zcode=CAZ530&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+          ;;
+      mission)
+          label="Mission Ridge (1900 ft), Freemont, CA"
+          lat=37.517534
+          lon=-121.89175
+          zcode=CAZ509
+          ## view-source:https://forecast.weather.gov/meteograms/Plotter.php?lat=37.6722&lon=-122.4939&wfo=MTR&zcode=CAZ509&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+          ;;
+      mttam-b)
+          label="Mt Tam, (Launch B; 1950 ft), Stinson Beach, CA"
+          lat=37.9112
+          lon=-122.6244
+          zcode=CAZ507
+          ## https://forecast.weather.gov/meteograms/Plotter.php?lat=37.9112&lon=-122.6244&wfo=MTR&zcode=CAZ507&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+          ;;
+      slide)
+          label="Slide Mountain (8200 ft), NV"
+          lat=39.3199
+          lon=-119.8674
+          zcode=NVZ002
+          ## https://forecast.weather.gov/meteograms/Plotter.php?lat=39.3199&lon=-119.8674&wfo=REV&zcode=NVZ002&gset=18&gdiff=8&unit=0&tinfo=PY8&ahour=0&pcmd=11011111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+          ;;
+      sugarhill)
+          label="Sugar Hill (7200 ft), CA"
+          lat=41.806521
+          lon=-120.328989
+          zcode=CAZ085
+          ## https://forecast.weather.gov/meteograms/Plotter.php?lat=41.8065&lon=-120.329&wfo=MFR&zcode=CAZ085&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+          ;;
+      sweetandlow)
+          label="Sweet and Low (5650 ft), CA"
+          lat=41.828500
+          lon=-120.346483
+          zcode=CAZ085
+          ## https://forecast.weather.gov/meteograms/Plotter.php?lat=41.8285&lon=-120.3465&wfo=MFR&zcode=CAZ085&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+          ;;
+      *)
+          error "Not one of the known sites ($(list_sites | tr $'\n' ' ' | sed -E 's/ $//g')): $site"
+  esac
+fi
 
 mdebug "Current time: $(date --rfc-3339=seconds)"
-mdebug "site=${site}"
-mdebug "label=${label}"
-mdebug "lat=${lat}"
-mdebug "lon=${lon}"
-mdebug "zcode=${zcode}"
+mdebug "site: '${site}'"
+mdebug "label: '${label}'"
+mdebug "lat: '${lat}'"
+mdebug "lon: '${lon}'"
+mdebug "zcode: '${zcode}'"
+
+[[ -n "$label" ]] || error "Site label ('--label=<string>') is not specified"
+[[ -n "$lat"   ]] || error "Site latitude ('--lat=<numeric>') is not specified"
+[[ -n "$lon"   ]] || error "Site longitude ('--lon=<numeric>') is not specified"
+[[ -n "$zcode" ]] || error "Site Z-Code ('--zcode=<string>') is not specified"
 
 root=$HOME/.cache/bhgc/sites
 make_dir "$root"
@@ -564,25 +592,37 @@ path="${root}/${site}"
 make_dir "$path"
 mdebug "path=${path}"
 
+noaa_now_url="https://forecast.weather.gov/MapClick.php?w0=t&w1=td&w2=wc&w3=sfcwind&w3u=1&w4=sky&w5=pop&w6=rh&w7=thunder&w8=rain&w9=snow&w10=fzg&w11=sleet&Submit=Submit&FcstType=graphical&site=mtr&unit=0&dd=0&bw=0&textField1=${lat}&textField2=${lon}&AheadHour=0"
 noaa_xml_url="https://forecast.weather.gov/MapClick.php?lat=${lat}&lon=${lon}&FcstType=digitalDWML"
 mdebug "NOAA XML URL: ${noaa_xml_url}"
-noaa_png_url="https://forecast.weather.gov/meteograms/Plotter.php?lat=${lat}&lon=${lon}&wfo=${wfo}&zcode=${zcode}&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111110000000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=&bw=0&hrspan=48&pqpfhr=6&psnwhr=6"
-mdebug "NOAA PNG URL: ${noaa_png_url}"
 
 if [[ $action == "view" ]]; then
-    minfo "site=${site}"
-    minfo "label=${label}"
-    minfo "lat=${lat}"
-    minfo "lon=${lon}"
-    minfo "zcode=${zcode}"
-    minfo "NOAA PNG URL=${noaa_png_url}"
-    minfo "NOAA XML URL=${noaa_xml_url}"
+    minfo "site: ${site}"
+    minfo "label: '${label}'"
+    minfo "lat: ${lat}"
+    minfo "lon: ${lon}"
+    minfo "zcode: ${zcode}"
+    minfo "path: ${path}"
+    minfo "NOAA 'now' URL: ${noaa_now_url}"
+    minfo "NOAA PNG URL: ${noaa_png_url}"
     
-    mapfile -t files < <(find "${path}" -type f -name "*.png" -printf "\n%AY-%Am-%AdT%AH%AM%AS %p" | sort --reverse --key=1)
+    mapfile -t files < <(find "${path}" -type f -name "*.xml" -printf "\n%AY-%Am-%AdT%AH%AM%AS %p" | sort --reverse --key=1)
     [[ ${#files} -eq 0 ]] && error "There are no downloaded forecasts for site '${site}': ${path}"
-    file=$(echo "${files[0]}" | cut -d ' ' -f 2)
-    mdebug "More recent file: ${file}"
-    view_image "$file"
+    xml_file=$(echo "${files[0]}" | cut -d ' ' -f 2)
+
+    ## In order to known NOAA PNG URL, we need to know the WFO
+    mdebug "Most recent XML file: ${xml_file}"
+    if [[ -z "${wfo}" ]]; then
+        wfo=$(xml_get_wfo "${xml_file}")
+        minfo "wfo: ${wfo}"
+        [[ -n "${wfo}" ]] || mwarn "Failed to infer WFO from XML file '${xml_file}'"
+        noaa_png_url="https://forecast.weather.gov/meteograms/Plotter.php?lat=${lat}&lon=${lon}&wfo=${wfo}&zcode=${zcode}&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111110000000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=&bw=0&hrspan=48&pqpfhr=6&psnwhr=6"
+        mdebug "NOAA PNG URL: ${noaa_png_url}"
+    fi
+
+    png_file=${xml_file/.xml/.png}
+
+    view_image "${png_file}"
     _exit 0
 fi
 
@@ -592,12 +632,12 @@ tf=$(mktemp)
 curl --silent -o "${tf}" "${noaa_xml_url}"
 
 timestamp=$(grep creation-date "${tf}" | sed -E 's/[ ]*<creation-date[^>]*>([^<]+)<.*/\1/g')
-[[ -z "${timestamp}" ]] && error "Failed to retrieve forecast for site=$site"
+[[ -z "${timestamp}" ]] && error "Failed to retrieve forecast for site '${site}'"
 mdebug "timestamp=${timestamp}"
 
-wfo=$(basename "$(grep credit "${tf}" | sed -E 's/[ ]*<credit[^>]*>([^<]+)<.*/\1/g')")
+wfo=$(xml_get_wfo "${tf}")
 mdebug "wfo=${wfo}"
-[[ -z "${wfo}" ]] && error "Failed to infer WFO (weather forecast office) for site=$site"
+[[ -z "${wfo}" ]] && error "Failed to infer WFO (weather forecast office) for site '$site'"
 
 xml="${path}/${site},${timestamp},${wfo}.xml"
 mdebug "xml=${xml}"
