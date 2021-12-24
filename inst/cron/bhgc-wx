@@ -65,31 +65,7 @@ mdebug() {
         _tput sgr0    ## reset
     } 1>&2
 }
-merror() {
-    local info version
-    {
-        info="ucsf-vpn $(version)"
-        version=$(openconnect_version 2> /dev/null)
-        if [[ -n $version ]]; then
-            info="$info, OpenConnect $version"
-        else
-            info="$info, OpenConnect version unknown"
-        fi
-        [[ -n $info ]] && info=" [$info]"
-        _tput setaf 1 ## red
-        echo "ERROR: $*$info"
-        _tput sgr0    ## reset
-    } 1>&2
-    _exit 1
-}
 
-mwarn() {
-    {
-        _tput setaf 3 ## yellow
-        echo "WARNING: $*"
-        _tput sgr0    ## reset
-    } 1>&2
-}
 minfo() {
     if ! $verbose; then
         return
@@ -360,7 +336,7 @@ view_image() {
 xml_get_wfo() {
     assert_file_exists "$1"
     res=$(basename "$(grep credit "$1" | sed -E 's/[ ]*<credit[^>]*>([^<]+)<.*/\1/g')")
-    [[ -n "${res}" ]] || mwarn "Failed to infer WFO (weather forecast office) from XML file '$1'"
+    [[ -n "${res}" ]] || warn "Failed to infer WFO (weather forecast office) from XML file '$1'"
     echo "${res}"
 }
 
@@ -419,9 +395,6 @@ while [[ $# -gt 0 ]]; do
         key=${key//=*}
         value=${1//--[[:alpha:]]*=}
         mdebug "Key-value option '$1' parsed to key='$key', value='$value'"
-        if [[ -z $value ]]; then
-            merror "Option '--$key' must not be empty"
-        fi
         if [[ "$key" == "site" ]]; then
             site=$value
         elif [[ "$key" == "label" ]]; then
@@ -441,6 +414,7 @@ while [[ $# -gt 0 ]]; do
         elif [[ "$key" == "email-bcc" ]]; then
             email_bcc=$value
         elif [[ "$key" == "skip" ]]; then
+            [[ -n $value ]] || error "Option '--$key' must not be empty"
             skip=$value
         fi
     else
@@ -655,7 +629,7 @@ if [[ $action == "view" ]]; then
     if [[ -z "${wfo}" ]]; then
         wfo=$(xml_get_wfo "${xml_file}")
         minfo "wfo: ${wfo}"
-        [[ -n "${wfo}" ]] || mwarn "Failed to infer WFO from XML file '${xml_file}'"
+        [[ -n "${wfo}" ]] || warn "Failed to infer WFO from XML file '${xml_file}'"
         noaa_png_url="https://forecast.weather.gov/meteograms/Plotter.php?lat=${lat}&lon=${lon}&wfo=${wfo}&zcode=${zcode}&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111110000000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=&bw=0&hrspan=48&pqpfhr=6&psnwhr=6"
         mdebug "NOAA PNG URL: ${noaa_png_url}"
         minfo "NOAA PNG URL: ${noaa_png_url}"
@@ -713,7 +687,7 @@ mdebug "XML file: $(ls -l "${xml}")"
 ## Email?
 if [[ -n "${email_to}" ]]; then
     if [[ -z "${label}" ]]; then
-        mwarn "Site label ('--label=<string>') not specified; will use site name instead: '${site}'"
+        warn "Site label ('--label=<string>') not specified; will use site name instead: '${site}'"
         label=${site}
     fi        
 
