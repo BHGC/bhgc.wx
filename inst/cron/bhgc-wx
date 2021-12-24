@@ -484,7 +484,7 @@ fi
 
 
 
-[[ -n "$site" ]] || error "Site name ('site') is not specified"
+[[ -n "$site" ]] || error "Site name ('--site=<string>') is not specified"
 
 if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
   case "$site" in
@@ -583,7 +583,13 @@ if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
           zcode=CAZ085
           ## https://forecast.weather.gov/meteograms/Plotter.php?lat=41.8285&lon=-120.3465&wfo=MFR&zcode=CAZ085&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
           ;;
-      *)
+      torreypines)
+          label="Torrey Pines Gliderport (100 ft), CA"
+          lat=32.8901
+          lon=-117.251
+          zcode=CAZ043
+          ;;
+     *)
           error "Not one of the known sites ($(list_sites | tr $'\n' ' ' | sed -E 's/ $//g')): $site"
   esac
 fi
