@@ -28,6 +28,8 @@
 ###  bhgc-fx sites
 ###  bhgc-fx download --site=mttam-b
 ###  bhgc-fx view --site=mttam-b
+###  bhgc-fx download --site=marshall --lat=34.21 --lon=-117.3029 --zcode=CAZ055
+
 ###
 ### Environment variables:
 ###  R_BHGC_NOAA_EMAIL_CREDENTIALS
@@ -580,10 +582,9 @@ mdebug "lat: '${lat}'"
 mdebug "lon: '${lon}'"
 mdebug "zcode: '${zcode}'"
 
-[[ -n "$label" ]] || error "Site label ('--label=<string>') is not specified"
-[[ -n "$lat"   ]] || error "Site latitude ('--lat=<numeric>') is not specified"
-[[ -n "$lon"   ]] || error "Site longitude ('--lon=<numeric>') is not specified"
-[[ -n "$zcode" ]] || error "Site Z-Code ('--zcode=<string>') is not specified"
+[[ -n "${lat}"   ]] || error "Site latitude ('--lat=<numeric>') is not specified"
+[[ -n "${lon}"   ]] || error "Site longitude ('--lon=<numeric>') is not specified"
+[[ -n "${zcode}" ]] || error "Site Z-Code ('--zcode=<string>') is not specified"
 
 root=$HOME/.cache/bhgc/sites
 make_dir "$root"
@@ -671,6 +672,11 @@ mdebug "XML file: $(ls -l "${xml}")"
 
 ## Email?
 if [[ $# -gt 0 ]]; then
+    if [[ -z "${label}" ]]; then
+        mwarn "Site label ('--label=<string>') not specified; will use site name instead: '${site}'"
+        label=${site}
+    fi        
+    
     mdebug "Composing email:"
     mdebug "Additional options to 'mail': ${extras}"
     subject="NOAA: ${label}"
