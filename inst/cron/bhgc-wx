@@ -1,8 +1,8 @@
 #! /usr/bin/env bash
-### bhgc-fx
+### bhgc-wx
 ### 
 ### Usage:
-###  bhgc-fx <command> [option]*
+###  bhgc-wx <command> [option]*
 ### 
 ### Commands:
 ###  download  Download FX for a site
@@ -23,13 +23,13 @@
 ###  --email_bcc=<email address>    
 ###
 ### Example:
-###  bhgc-fx --help
-###  bhgc-fx --version
-###  bhgc-fx sites
-###  bhgc-fx download --site=mttam-b
-###  bhgc-fx view --site=mttam-b
-###  bhgc-fx download --site=marshall --lat=34.21 --lon=-117.3029 --zcode=CAZ055
-
+###  bhgc-wx --help
+###  bhgc-wx --version
+###  bhgc-wx sites
+###  bhgc-wx download --site=mttam-b
+###  bhgc-wx view --site=mttam-b
+###  bhgc-wx download --site=marshall --lat=34.21 --lon=-117.3029 --zcode=CAZ055
+###  bhgc-wx view --site=marshall --lat=34.21 --lon=-117.3029 --zcode=CAZ055
 ###
 ### Environment variables:
 ###  R_BHGC_NOAA_EMAIL_CREDENTIALS
@@ -534,6 +534,12 @@ if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
           lon=-121.8114
           zcode=CAZ530
           ## https://forecast.weather.gov/meteograms/Plotter.php?lat=36.6835&lon=-121.8114&wfo=MTR&zcode=CAZ530&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=0&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
+          ;;
+      marshall)
+          label="Marshall Peak (4200 ft)"
+          lat=34.21
+          lon=-117.3029
+          zcode=CAZ055
           ;;
       mission)
           label="Mission Ridge (1900 ft), Freemont, CA"
