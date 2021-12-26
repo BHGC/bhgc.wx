@@ -548,6 +548,12 @@ if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
           zcode=CAZ014
           ## https://forecast.weather.gov/meteograms/Plotter.php?lat=40.8431&lon=-121.4275&wfo=STO&zcode=CAZ014&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=12&pcmd=11101111111110000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=0&bw=0&hrspan=48&pqpfhr=6&psnwhr=6
           ;;
+      horsecanyon)
+          label="Horse Canyon (4400 ft), San Diego, CA"
+          lat=32.774
+          lon=-116.476
+          zcode=CAZ058
+          ;;
       lakecourt)
           label="Lake Court Dune, Marina, CA"
           lat=36.6835
