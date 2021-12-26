@@ -28,4 +28,5 @@ jobs:
 
     - name: ShellCheck
       run: |
-        PATH=".:$PATH" shellcheck -x inst/cron/noaa_download_if_new.sh
+        PATH=".:$PATH" shellcheck -x inst/bin/bhgc-wx
+        PATH=".:$PATH" shellcheck -x inst/bin/noaa_download_if_new.sh
