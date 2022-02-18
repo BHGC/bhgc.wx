@@ -359,6 +359,7 @@ extras=
 email_from=
 email_to=
 email_bcc=
+ahour=0
 
 # Parse command-line options
 while [[ $# -gt 0 ]]; do
@@ -407,6 +408,8 @@ while [[ $# -gt 0 ]]; do
             wfo=$value
         elif [[ "$key" == "zcode" ]]; then
             zcode=$value
+        elif [[ "$key" == "ahour" ]]; then
+            ahour=$value
         elif [[ "$key" == "email-from" ]]; then
             email_from=$value
         elif [[ "$key" == "email-to" ]]; then
@@ -430,6 +433,9 @@ mdebug "dryrun: ${dryrun}"
 mdebug "force: ${force}"
 mdebug "skip: ${skip}"
 mdebug "extras: '${extras}'"
+mdebug "ahour: ${ahour} (hours)"
+mdebug "email_from: ${email_from}"
+mdebug "email_to: ${email_to}"
 
 ## --help should always be available prior to any validation errors
 if [[ -z $action ]]; then
@@ -655,7 +661,6 @@ if [[ $action == "view" ]]; then
         wfo=$(xml_get_wfo "${xml_file}")
         minfo "wfo: ${wfo}"
         [[ -n "${wfo}" ]] || warn "Failed to infer WFO from XML file '${xml_file}'"
-        ahour=0
         noaa_png_url="https://forecast.weather.gov/meteograms/Plotter.php?lat=${lat}&lon=${lon}&wfo=${wfo}&zcode=${zcode}&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=${ahour}&pcmd=11101111110000000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=&bw=0&hrspan=48&pqpfhr=6&psnwhr=6"
         mdebug "NOAA PNG URL: ${noaa_png_url}"
         minfo "NOAA PNG URL: ${noaa_png_url}"
@@ -693,18 +698,24 @@ if ! $force && $skip && [[ -f "${xml}" ]]; then
     exit 0
 fi
 
-png="${path}/${site},${file_timestamp},${wfo}.png"
-## Already downloaded?
-if ! $force && [[ -f "${png}" ]]; then
+## Download now, +48 hours, +96 hours
+ahours=(0)
+png_files=()
+for ahour in "${ahours[@]}"; do
+  png="${path}/${site},${file_timestamp},${wfo},${ahour}h.png"
+  ## Already downloaded?
+  if ! $force && [[ -f "${png}" ]]; then
     mdebug "Skipping because already downloaded: ${png}"
-else
-    ahour=0
+  else
     noaa_png_url="https://forecast.weather.gov/meteograms/Plotter.php?lat=${lat}&lon=${lon}&wfo=${wfo}&zcode=${zcode}&gset=18&gdiff=3&unit=0&tinfo=PY8&ahour=${ahour}&pcmd=11101111110000000000000000000000000000000000000000000000000&lg=en&indu=1!1!1!&dd=&bw=0&hrspan=48&pqpfhr=6&psnwhr=6"
     mdebug "NOAA PNG URL: ${noaa_png_url}"
     mdebug "Downloading PNG file"
     curl --silent -o "${png}" "${noaa_png_url}"
-fi
-mdebug "PNG file: $(ls -l "${png}")"
+  fi
+  mdebug "PNG file: $(ls -l "${png}")"
+  png_files+=("${png}")
+done
+mdebug "PNG files: [n=${#png_files[@]}] ${png_files[*]}"
 
 if ! $force && $skip && [[ -f "${xml}" ]]; then
     [[ -f "${tf}" ]] && rm "${tf}"
@@ -712,7 +723,6 @@ else
     mv "${tf}" "${xml}"
 fi
 mdebug "XML file: $(ls -l "${xml}")"
-
 
 ## Email?
 if [[ -n "${email_to}" ]]; then
@@ -744,13 +754,18 @@ if [[ -n "${email_to}" ]]; then
     body="${body}${NL}* ${url}${NL}"
 #    body="${body}${NL}${NL}This message was sent on $(date --rfc-3339=seconds)${NL}"
     mdebug "body=${NL}${body}"
-    
-    mdebug "Email command: printf \"%s\" \"\${body}\" | mail -a \"\${png}\" -s \"\${subject}\" -r \"${email_from}\" \"${email_bcc}\" \"${email_to}\""
+
+    attchs=()
+    for ff in "${png_files[@]}"; do
+      attchs+=("-a \"${ff}\"")
+    done
+    mdebug "Attachments: ${attchs[*]}"
+    mdebug "Email command: printf \"%s\" \"\${body}\" | mail \"\${attchs[@]}\" -s \"\${subject}\" -r \"${email_from}\" \"${email_bcc}\" \"${email_to}\""
     if $dryrun; then
         mdebug "Email result: N/A (dryrun=true)"
     else
         # shellcheck disable=SC2086,SC2048
-        printf "%s" "${body}" | mail -a "${png}" -s "${subject}" -r "${email_from}" "${email_bcc}" "${email_to}"
+        printf "%s" "${body}" | mail "${attchs[@]}" -s "${subject}" -r "${email_from}" "${email_bcc}" "${email_to}"
         mdebug "Email result: $?"
     fi
 
