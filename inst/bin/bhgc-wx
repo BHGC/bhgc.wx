@@ -551,6 +551,12 @@ if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
           lon=-119.703
           zcode=CAZ052
           ;;
+      elk-mountain)
+          label="Elk Mountain (3800 ft), CA"
+          lat=39.2764
+          lon=-122.9435
+          zcode=CAZ114
+          ;;
       hatcreek)
           label="Hat Creek (4500 ft), CA"
           lat=40.843055
