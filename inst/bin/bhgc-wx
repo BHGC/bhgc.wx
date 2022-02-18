@@ -360,6 +360,7 @@ email_from=
 email_to=
 email_bcc=
 ahour=0
+stitch=false
 
 # Parse command-line options
 while [[ $# -gt 0 ]]; do
@@ -389,6 +390,8 @@ while [[ $# -gt 0 ]]; do
         skip=true
     elif [[ "$1" == "--verbose" ]]; then
         verbose=1
+    elif [[ "$1" == "--stitch" ]]; then
+	stitch=true
     
     ## Options (--key=value):
     elif [[ "$1" =~ ^--.*=.*$ ]]; then
@@ -434,6 +437,7 @@ mdebug "force: ${force}"
 mdebug "skip: ${skip}"
 mdebug "extras: '${extras}'"
 mdebug "ahour: ${ahour} (hours)"
+mdebug "stitch: ${stitch}"
 mdebug "email_from: ${email_from}"
 mdebug "email_to: ${email_to}"
 
@@ -716,6 +720,19 @@ for ahour in "${ahours[@]}"; do
   png_files+=("${png}")
 done
 mdebug "PNG files: [n=${#png_files[@]}] ${png_files[*]}"
+
+## Stitch images horizontally
+if $stitch && [[ ${#png_files[@]} -gt 1 ]]; then
+    png="${path}/${site},${file_timestamp},${wfo},${ahours[0]}-${ahours[-1]}h.png"
+    if ! $force && [[ -f "${png}" ]]; then
+        mdebug "Skipping because already stitched: ${png}"
+    else
+        mdebug "Stitching horizontally: ${png}"
+        convert +append "${png_files[@]}" "${png}"
+    fi    
+    ls -l "${png}"
+    png_files+=("${png}")
+fi
 
 if ! $force && $skip && [[ -f "${xml}" ]]; then
     [[ -f "${tf}" ]] && rm "${tf}"
