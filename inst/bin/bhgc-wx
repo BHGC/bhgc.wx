@@ -18,7 +18,11 @@
 ###  --version
 ###  --debug
 ###  --force
+###  --lat=<coord>
+###  --lon=<coord>
+###  ----zcode=<zcode>
 ###  --site=<site>
+###  --ahour=<hours>                  <hours> = 0, 48, or 96
 ###  --email_from=<email address>  
 ###  --email_to=<email address>    
 ###  --email_bcc=<email address>    
@@ -29,6 +33,7 @@
 ###  bhgc-wx sites
 ###  bhgc-wx download --site=mttam-b
 ###  bhgc-wx view --site=mttam-b
+###  bhgc-wx view --site=mttam-b --ahour=48
 ###  bhgc-wx parse 'https://forecast.weather.gov/meteograms/Plotter.php?lat=...'
 ###  bhgc-wx download --site=marshall --lat=34.21 --lon=-117.3029 --zcode=CAZ055
 ###  bhgc-wx view --site=marshall --lat=34.21 --lon=-117.3029 --zcode=CAZ055
@@ -40,8 +45,8 @@
 ###  * curl
 ###  * mail
 ###
-### Version: 0.1.0-9000
-### Copyright: Henrik Bengtsson (2019-2021)
+### Version: 0.1.0-9001
+### Copyright: Henrik Bengtsson (2019-2022)
 ### License: MIT
 
 # -------------------------------------------------------------------------
@@ -391,7 +396,7 @@ while [[ $# -gt 0 ]]; do
     elif [[ "$1" == "--verbose" ]]; then
         verbose=1
     elif [[ "$1" == "--stitch" ]]; then
-	stitch=true
+        stitch=true
     
     ## Options (--key=value):
     elif [[ "$1" =~ ^--.*=.*$ ]]; then
@@ -588,6 +593,12 @@ if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
           lon=-122.6244
           zcode=CAZ507
           ;;
+      potato-hill)
+          label="Potato Hill, CA"
+          lat=39.341
+          lon=-122.685
+          zcode=CAZ063
+          ;;
       skyport)
           label="Skyport (3800 ft), Santa Barbara, CA"
           lat=34.4809
@@ -670,7 +681,7 @@ if [[ $action == "view" ]]; then
         minfo "NOAA PNG URL: ${noaa_png_url}"
     fi
 
-    png_file=${xml_file/.xml/.png}
+    png_file=${xml_file/.xml/,${ahour}h.png}
 
     view_image "${png_file}"
     _exit 0
