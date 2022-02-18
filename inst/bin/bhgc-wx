@@ -699,7 +699,7 @@ if ! $force && $skip && [[ -f "${xml}" ]]; then
 fi
 
 ## Download now, +48 hours, +96 hours
-ahours=(0)
+ahours=(0 48 96)
 png_files=()
 for ahour in "${ahours[@]}"; do
   png="${path}/${site},${file_timestamp},${wfo},${ahour}h.png"
@@ -757,7 +757,7 @@ if [[ -n "${email_to}" ]]; then
 
     attchs=()
     for ff in "${png_files[@]}"; do
-      attchs+=("-a \"${ff}\"")
+      attchs+=("-a" "${ff}")
     done
     mdebug "Attachments: ${attchs[*]}"
     mdebug "Email command: printf \"%s\" \"\${body}\" | mail \"\${attchs[@]}\" -s \"\${subject}\" -r \"${email_from}\" \"${email_bcc}\" \"${email_to}\""
