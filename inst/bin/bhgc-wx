@@ -802,7 +802,7 @@ if [[ -n ${sounding} ]]; then
         file_timestamp=${file_timestamp//-/}
         file_timestamp=${file_timestamp//:/}
         
-        png="${path}/${site},${sounding},${file_timestamp}.png"
+        png="${path}/${sounding},${file_timestamp}.png"
         mdebug "Sounding PNG: ${png}"
         ## Already downloaded?
         if ! $force && [[ -f "${png}" ]]; then
