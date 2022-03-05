@@ -1,5 +1,8 @@
 SHELL:=/bin/bash
 
+shellcheck:
+	shellcheck inst/bin/*
+
 start:
 	Rscript -e 'shiny::runApp(bhgc.wx::noaa_app(), port = 4042L)'
 

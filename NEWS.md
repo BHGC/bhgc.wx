@@ -7,8 +7,14 @@ NEW FEATURES:
 
  * Add more sites.
 
- * Add `inst/bin/bhgc-wx` script.
- 
+ * Add `bhgc-wx` script under `inst/bin/`.
+
+ * Now `bhgc-wx` infers whether or not `mail` uses `-a` or `-A` for
+   attachments.
+
+ * Now `bhgc-wx` downloads sounding graphs and attaches them to the email.
+   Download source is https://www.topaflyers.com/weather/soundings/.
+
 
 Version: 0.3.0 [2020-02-29]
 

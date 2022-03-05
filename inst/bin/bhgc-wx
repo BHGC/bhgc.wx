@@ -95,6 +95,13 @@ mdeprecated() {
         _tput sgr0    ## reset
     } 1>&2
 }
+mwarn() {
+    {
+        _tput setaf 3 ## yellow
+        echo "WARNING: $*"
+        _tput sgr0    ## reset
+    } 1>&2
+}
 mnote() {
     {
         _tput setaf 11  ## bright yellow
@@ -360,6 +367,7 @@ lat=
 lon=
 wfo=
 zcode=
+sounding=
 extras=
 email_from=
 email_to=
@@ -416,6 +424,8 @@ while [[ $# -gt 0 ]]; do
             wfo=$value
         elif [[ "$key" == "zcode" ]]; then
             zcode=$value
+        elif [[ "$key" == "sounding" ]]; then
+            sounding=$value
         elif [[ "$key" == "ahour" ]]; then
             ahour=$value
         elif [[ "$key" == "email-from" ]]; then
@@ -544,6 +554,7 @@ if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
           lat=37.4754
           lon=-121.8613
           zcode=CAZ511
+          sounding=oak
           ;;
       ej)
           label="Upper EJ (3800 ft), Santa Barbara, CA"
@@ -586,6 +597,7 @@ if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
           lat=37.517534
           lon=-121.89175
           zcode=CAZ509
+          sounding=oak
           ;;
       moremesa)
           label="More Mesa (110 ft), Santa Barbara, CA"
@@ -646,6 +658,7 @@ mdebug "label: '${label}'"
 mdebug "lat: '${lat}'"
 mdebug "lon: '${lon}'"
 mdebug "zcode: '${zcode}'"
+mdebug "sounding: '${sounding}'"
 
 [[ -n "${lat}"   ]] || error "Site latitude ('--lat=<numeric>') is not specified"
 [[ -n "${lon}"   ]] || error "Site longitude ('--lon=<numeric>') is not specified"
@@ -658,10 +671,18 @@ path="${root}/${site}"
 make_dir "$path"
 mdebug "path=${path}"
 
+
+# -------------------------------------------------------------------------
+# Data sources
+# -------------------------------------------------------------------------
 noaa_now_url="https://forecast.weather.gov/MapClick.php?w0=t&w1=td&w2=wc&w3=sfcwind&w3u=1&w4=sky&w5=pop&w6=rh&w7=thunder&w8=rain&w9=snow&w10=fzg&w11=sleet&Submit=Submit&FcstType=graphical&site=mtr&unit=0&dd=0&bw=0&textField1=${lat}&textField2=${lon}&AheadHour=0"
 noaa_xml_url="https://forecast.weather.gov/MapClick.php?lat=${lat}&lon=${lon}&FcstType=digitalDWML"
 mdebug "NOAA XML URL: ${noaa_xml_url}"
 
+
+# -------------------------------------------------------------------------
+# View NOAA forecasts
+# -------------------------------------------------------------------------
 if [[ $action == "view" ]]; then
     minfo "site: ${site}"
     minfo "label: '${label}'"
@@ -673,7 +694,7 @@ if [[ $action == "view" ]]; then
     minfo "NOAA XML URL: ${noaa_xml_url}"
     
     mapfile -t files < <(find "${path}" -type f -name "*.xml" -printf "\n%AY-%Am-%AdT%AH%AM%AS %p" | sort --reverse --key=1)
-    [[ ${#files} -eq 0 ]] && error "There are no downloaded forecasts for site '${site}': ${path}"
+    [[ ${#files} -eq 0 ]] && error "There are no downloaded forecasts for site '${site}'. Did you forget to run 'bhgc-wx download ...'?: ${path}"
     xml_file=$(echo "${files[0]}" | cut -d ' ' -f 2)
 
     ## In order to known NOAA PNG URL, we need to know the WFO
@@ -695,6 +716,12 @@ fi
 
 [[ $action == "download" ]] || error "INTERNAL ERROR: action=${action}"
 
+
+# -------------------------------------------------------------------------
+# Download NOAA forecasts
+# -------------------------------------------------------------------------
+
+## (i) Download NOAA XML forecast data
 tf=$(mktemp)
 curl --silent -o "${tf}" "${noaa_xml_url}"
 
@@ -716,9 +743,9 @@ mdebug "xml=${xml}"
 if ! $force && $skip && [[ -f "${xml}" ]]; then
     mdebug "Skipping. Already downloaded: ${xml}"
     rm "${tf}"
-    exit 0
 fi
 
+## (ii) Download NOAA PNG forecast graphs
 ## Download now, +48 hours, +96 hours
 ahours=(0 48 96)
 png_files=()
@@ -758,7 +785,46 @@ else
 fi
 mdebug "XML file: $(ls -l "${xml}")"
 
-## Email?
+
+# -------------------------------------------------------------------------
+# Download sounding graph
+# -------------------------------------------------------------------------
+if [[ -n ${sounding} ]]; then
+    sounding_png_path="https://www.topaflyers.com/weather/soundings"
+    mdebug "Sounding index page: ${sounding_png_path}/"
+
+    ## Download index with timestamps
+    mapfile -t res < <(curl --silent "${sounding_png_path}/" | grep -F "${sounding,,}.png" | sed -E 's/.*([[:digit:]]{4}(-[[:digit:]]{2}){2}[[:space:]][[:digit:]:]+).*/\1/g')
+    mdebug "Downloaded timestamp from index page: [n=${#res[*]}] ${res[*]}"
+    if [[ ${#res[@]} -eq 1 ]]; then
+        file_timestamp=${res[*]}
+        file_timestamp=${file_timestamp// /T}
+        file_timestamp=${file_timestamp//-/}
+        file_timestamp=${file_timestamp//:/}
+        
+        png="${path}/${site},${sounding},${file_timestamp}.png"
+        mdebug "Sounding PNG: ${png}"
+        ## Already downloaded?
+        if ! $force && [[ -f "${png}" ]]; then
+            mdebug "Skipping because already downloaded: ${png}"
+        else
+            png_url="${sounding_png_path}/${sounding,,}.png"
+            mdebug "Sounding PNG URL: ${png_url}"
+            mdebug "Downloading PNG file"
+            curl --silent -o "${png}" "${png_url}"
+        fi
+        mdebug "PNG file: $(ls -l "${png}")"
+        png_files+=("${png}")
+        mdebug "PNG files: [n=${#png_files[@]}] ${png_files[*]}"
+    else
+        mwarn "Skipping sounding graph, because something went wrong trying to download the index page for the ${sounding} sounding: ${sounding_png_path}/"
+    
+    fi    
+fi    
+
+# -------------------------------------------------------------------------
+## Send email?
+# -------------------------------------------------------------------------
 if [[ -n "${email_to}" ]]; then
     if [[ -z "${label}" ]]; then
         warn "Site label ('--label=<string>') not specified; will use site name instead: '${site}'"
@@ -789,10 +855,18 @@ if [[ -n "${email_to}" ]]; then
 #    body="${body}${NL}${NL}This message was sent on $(date --rfc-3339=seconds)${NL}"
     mdebug "body=${NL}${body}"
 
-    attchs=()
-    for ff in "${png_files[@]}"; do
-      attchs+=("-a" "${ff}")
-    done
+        
+    ## Attach files?
+    if [[ ${#png_files[@]} -gt 0 ]]; then
+        ## Does the 'mail' client use '-A' or '-a' for attachments?
+        opt="-a"
+        mail --help | grep -q -E "[-]A.*attach" && opt="-A"
+        mdebug "Command-line option 'mail' use for attachments: ${opt}"
+        attchs=()
+        for ff in "${png_files[@]}"; do
+            attchs+=("${opt}" "${ff}")
+        done
+    fi
     mdebug "Attachments: ${attchs[*]}"
     mdebug "Email command: printf \"%s\" \"\${body}\" | mail \"\${attchs[@]}\" -s \"\${subject}\" -r \"${email_from}\" \"${email_bcc}\" \"${email_to}\""
     if $dryrun; then
