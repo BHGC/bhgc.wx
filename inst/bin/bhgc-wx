@@ -836,6 +836,28 @@ if [[ -n "${email_to}" ]]; then
     mdebug " - To: ${email_to}"
     mdebug " - Optional bcc: ${email_bcc}"
     mdebug "Additional options to 'mail': ${extras}"
+
+    ## Get info on mail client
+    bin=$(command -v mail)
+    mdebug "Location of 'mail': ${bin}"
+    [[ -z ${bin} ]] && merror "Failed to locate mail client binary: mail"
+    bin=$(readlink -e "${bin}")
+    mdebug "True location of 'mail': ${bin}"
+    [[ -z ${bin} ]] && merror "Failed to locate mail client binary after expanding path: mail"
+
+    ## Does the 'mail' client use '-A' (default) or '-a' for attachments?
+    opt_attach="-A"
+    case $(basename "${bin}") in
+      mailx)
+        opt_attach="-a";;
+      mail)
+        opt_attach="-A";;
+      *)
+        merror "Unknown mail client: ${bin}"
+    esac
+    mdebug "Command-line option 'mail' use for attachments: ${opt_attach}"
+
+    ## Compose email header and body
     subject="NOAA: ${label}"
     mdebug "subject=${subject}"
     date=$(echo "${timestamp}" | sed -E 's/(.*)T(.*)([-+].*)/\1/g')
@@ -855,19 +877,13 @@ if [[ -n "${email_to}" ]]; then
 #    body="${body}${NL}${NL}This message was sent on $(date --rfc-3339=seconds)${NL}"
     mdebug "body=${NL}${body}"
 
-        
     ## Attach files?
-    if [[ ${#png_files[@]} -gt 0 ]]; then
-        ## Does the 'mail' client use '-A' or '-a' for attachments?
-        opt="-a"
-        mail --help | grep -q -E "[-]A.*attach" && opt="-A"
-        mdebug "Command-line option 'mail' use for attachments: ${opt}"
-        attchs=()
-        for ff in "${png_files[@]}"; do
-            attchs+=("${opt}" "${ff}")
-        done
-    fi
+    attchs=()
+    for ff in "${png_files[@]}"; do
+        attchs+=("${opt_attach}" "${ff}")
+    done
     mdebug "Attachments: ${attchs[*]}"
+
     mdebug "Email command: printf \"%s\" \"\${body}\" | mail \"\${attchs[@]}\" -s \"\${subject}\" -r \"${email_from}\" \"${email_bcc}\" \"${email_to}\""
     if $dryrun; then
         mdebug "Email result: N/A (dryrun=true)"
