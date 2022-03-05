@@ -610,6 +610,7 @@ if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
           lat=37.9112
           lon=-122.6244
           zcode=CAZ507
+          sounding=oak
           ;;
       potato-hill)
           label="Potato Hill, CA"
