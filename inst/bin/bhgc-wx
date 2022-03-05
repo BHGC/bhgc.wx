@@ -874,7 +874,7 @@ if [[ -n "${email_to}" ]]; then
     body="${body}${NL}* ${url}${NL}"
     url="https://forecast.weather.gov/product.php?site=${wfo^^}&issuedby=${wfo^^}&product=AFD&format=TXT&glossary=1"
     body="${body}${NL}* ${url}${NL}"
-#    body="${body}${NL}${NL}This message was sent on $(date --rfc-3339=seconds)${NL}"
+    body="${body}${NL}${NL}Feedback: https://github.com/BHGC/bhgc.wx${NL}"
     mdebug "body=${NL}${body}"
 
     ## Attach files?
