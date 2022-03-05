@@ -740,11 +740,6 @@ mdebug "wfo=${wfo}"
 xml="${path}/${site},${file_timestamp},${wfo}.xml"
 mdebug "xml=${xml}"
 
-## Already downloaded?
-if ! $force && $skip && [[ -f "${xml}" ]]; then
-    mdebug "Skipping. Already downloaded: ${xml}"
-    rm "${tf}"
-fi
 
 ## (ii) Download NOAA PNG forecast graphs
 ## Download now, +48 hours, +96 hours
@@ -777,6 +772,14 @@ if $stitch && [[ ${#png_files[@]} -gt 1 ]]; then
     fi    
     ls -l "${png}"
     png_files+=("${png}")
+fi
+
+
+## Already downloaded? (This prevents re-sending identical emails over and over)
+if ! $force && $skip && [[ -f "${xml}" ]]; then
+    mdebug "Skipping. Already downloaded: ${xml}"
+    rm "${tf}"
+    exit 0
 fi
 
 if ! $force && $skip && [[ -f "${xml}" ]]; then
