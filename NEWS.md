@@ -1,27 +1,31 @@
 bhgc.wx
 =======
 
-Version: 0.3.0-9000 [2021-06-28]
+Version: 0.3.0-9001 [2022-03-05]
+
+NEW FEATURES:
 
  * Add more sites.
+
+ * Add `inst/bin/bhgc-wx` script.
  
 
 Version: 0.3.0 [2020-02-29]
 
 SIGNIFICANT CHANGES:
 
- * read_noaa() now return GPS coordinates as three separate columns
+ * `read_noaa()` now return GPS coordinates as three separate columns
    'latitude', 'longitude', and 'altitude'.
    
 NEW FEATURES:
 
- * Add save_noaa() to save a weather forecast to an RDS file.
+ * Add `save_noaa()` to save a weather forecast to an RDS file.
 
- * Add update_noaa() to save weather forcast to database if updated.
+ * Add `update_noaa()` to save weather forcast to database if updated.
 
- * timezone(new) returns current time zone invisibly if a new one is set.
+ * `timezone(new)` returns current time zone invisibly if a new one is set.
  
- * Argument 'days' for ggplot_noaa_{wind_direction,surface_wind}() can now
+ * Argument 'days' for `ggplot_noaa_{wind_direction,surface_wind}()` can now
    specify number of days forward by specifying a single scalar.
 
 
@@ -34,7 +38,7 @@ NEW FEATURES:
  
 BUG FIX:
 
- * Now 'make deploy' can deploy with the package on GitHub.
+ * Now `make deploy` can deploy with the package on GitHub.
  
 
 Version: 0.1.3-9000 [2019-12-13]
@@ -46,7 +50,7 @@ Version 0.1.3 (2019-05-24)
 
 NEW FEATURES:
 
- * Add support for URL queries, i.e. site_idx=4.
+ * Add support for URL queries, i.e. `site_idx = 4`.
 
 
 Version 0.1.2 (2018-10-31)
