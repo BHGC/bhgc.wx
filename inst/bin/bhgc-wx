@@ -641,6 +641,12 @@ if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
           lon=-120.346483
           zcode=CAZ085
           ;;
+      tollhouse)
+          label="Tollhouse (4100 ft), CA"
+          lat=37.0149
+          lon=-119.3733
+          zcode=CAZ320
+          ;;
       torreypines)
           label="Torrey Pines Gliderport (100 ft), La Jolla, San Diego, CA"
           lat=32.8901

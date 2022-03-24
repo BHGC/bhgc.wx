@@ -49,7 +49,7 @@ locations <- list(
 
   "Hat Creek, CA (4500 ft)" = list(
     seealso = c(
-      BHGC = "https://bhgc.org/sites/bayarea/",
+      BHGC = "https://bhgc.org/sites/",
       WindSlammer = NA
     ),
     launch_gps = c(40.843055, -121.427468)
@@ -80,7 +80,7 @@ locations <- list(
 
   "Big Sur, CA (3200 ft)" = list(
     seealso = c(
-      BHGC = "https://bhgc.org/sites/bayarea/",
+      BHGC = "https://bhgc.org/sites/",
       WindSlammer = NA
     ),
     launch_gps = c(35.9713, -121.453)
@@ -88,15 +88,23 @@ locations <- list(
 
   "Dunlap, CA (4600 ft)" = list(
     seealso = c(
-      BHGC = "https://bhgc.org/sites/bayarea/",
+      BHGC = "https://bhgc.org/sites/",
       WindSlammer = NA
     ),
     launch_gps = c(36.7641, -119.0976)
   ),
 
+  "Tollhouse, CA (4100 ft)" = list(
+    seealso = c(
+      BHGC = "https://bhgc.org/sites/",
+      WindSlammer = NA
+    ),
+    launch_gps = c(37.0149,-119.3733)
+  ),
+
   "Marshall Peak (4200 ft)" = list(
     seealso = c(
-      BHGC = "https://bhgc.org/sites/bayarea/",
+      BHGC = "https://bhgc.org/sites/southcal/",
       WindSlammer = NA
     ),
     launch_gps = c(34.210000, -117.302900)
