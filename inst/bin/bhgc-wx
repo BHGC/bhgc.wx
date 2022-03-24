@@ -610,6 +610,7 @@ if [ -z "$label" ] && [ -z "$lat" ] && [ -z "$lon" ] && [ -z "$zcode" ]; then
           lat=37.9112
           lon=-122.6244
           zcode=CAZ507
+          sounding=oak
           ;;
       potato-hill)
           label="Potato Hill, CA"
@@ -745,11 +746,6 @@ mdebug "wfo=${wfo}"
 xml="${path}/${site},${file_timestamp},${wfo}.xml"
 mdebug "xml=${xml}"
 
-## Already downloaded?
-if ! $force && $skip && [[ -f "${xml}" ]]; then
-    mdebug "Skipping. Already downloaded: ${xml}"
-    rm "${tf}"
-fi
 
 ## (ii) Download NOAA PNG forecast graphs
 ## Download now, +48 hours, +96 hours
@@ -784,6 +780,14 @@ if $stitch && [[ ${#png_files[@]} -gt 1 ]]; then
     png_files+=("${png}")
 fi
 
+
+## Already downloaded? (This prevents re-sending identical emails over and over)
+if ! $force && $skip && [[ -f "${xml}" ]]; then
+    mdebug "Skipping. Already downloaded: ${xml}"
+    rm "${tf}"
+    exit 0
+fi
+
 if ! $force && $skip && [[ -f "${xml}" ]]; then
     [[ -f "${tf}" ]] && rm "${tf}"
 else
@@ -808,7 +812,7 @@ if [[ -n ${sounding} ]]; then
         file_timestamp=${file_timestamp//-/}
         file_timestamp=${file_timestamp//:/}
         
-        png="${path}/${site},${sounding},${file_timestamp}.png"
+        png="${path}/${sounding},${file_timestamp}.png"
         mdebug "Sounding PNG: ${png}"
         ## Already downloaded?
         if ! $force && [[ -f "${png}" ]]; then
@@ -842,6 +846,28 @@ if [[ -n "${email_to}" ]]; then
     mdebug " - To: ${email_to}"
     mdebug " - Optional bcc: ${email_bcc}"
     mdebug "Additional options to 'mail': ${extras}"
+
+    ## Get info on mail client
+    bin=$(command -v mail)
+    mdebug "Location of 'mail': ${bin}"
+    [[ -z ${bin} ]] && merror "Failed to locate mail client binary: mail"
+    bin=$(readlink -e "${bin}")
+    mdebug "True location of 'mail': ${bin}"
+    [[ -z ${bin} ]] && merror "Failed to locate mail client binary after expanding path: mail"
+
+    ## Does the 'mail' client use '-A' (default) or '-a' for attachments?
+    opt_attach="-A"
+    case $(basename "${bin}") in
+      mailx)
+        opt_attach="-a";;
+      mail)
+        opt_attach="-A";;
+      *)
+        merror "Unknown mail client: ${bin}"
+    esac
+    mdebug "Command-line option 'mail' use for attachments: ${opt_attach}"
+
+    ## Compose email header and body
     subject="NOAA: ${label}"
     mdebug "subject=${subject}"
     date=$(echo "${timestamp}" | sed -E 's/(.*)T(.*)([-+].*)/\1/g')
@@ -858,22 +884,16 @@ if [[ -n "${email_to}" ]]; then
     body="${body}${NL}* ${url}${NL}"
     url="https://forecast.weather.gov/product.php?site=${wfo^^}&issuedby=${wfo^^}&product=AFD&format=TXT&glossary=1"
     body="${body}${NL}* ${url}${NL}"
-#    body="${body}${NL}${NL}This message was sent on $(date --rfc-3339=seconds)${NL}"
+    body="${body}${NL}${NL}Feedback: https://github.com/BHGC/bhgc.wx${NL}"
     mdebug "body=${NL}${body}"
 
-        
     ## Attach files?
-    if [[ ${#png_files[@]} -gt 0 ]]; then
-        ## Does the 'mail' client use '-A' or '-a' for attachments?
-        opt="-a"
-        mail --help | grep -q -E "[-]A.*attach" && opt="-A"
-        mdebug "Command-line option 'mail' use for attachments: ${opt}"
-        attchs=()
-        for ff in "${png_files[@]}"; do
-            attchs+=("${opt}" "${ff}")
-        done
-    fi
+    attchs=()
+    for ff in "${png_files[@]}"; do
+        attchs+=("${opt_attach}" "${ff}")
+    done
     mdebug "Attachments: ${attchs[*]}"
+
     mdebug "Email command: printf \"%s\" \"\${body}\" | mail \"\${attchs[@]}\" -s \"\${subject}\" -r \"${email_from}\" \"${email_bcc}\" \"${email_to}\""
     if $dryrun; then
         mdebug "Email result: N/A (dryrun=true)"
